@@ -11,7 +11,7 @@ public class GsPredictions
     public DateTime DatePredicted { get; set; }
     
     public long IdUser { get; set; }
-    public GsUser GsUser { get; set; }
+    public GsUsers GsUsers { get; set; }
     
     public long IdScores { get; set; }
     public GsScores GsScores { get; set; }

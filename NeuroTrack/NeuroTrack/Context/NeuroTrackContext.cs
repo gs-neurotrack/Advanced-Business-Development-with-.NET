@@ -8,7 +8,7 @@ public class NeuroTrackContext : DbContext
 
     private readonly IConfiguration _configuration;
 
-    public NeuroTrackContext(IConfiguration configuration)
+    public NeuroTrackContext(DbContextOptions<NeuroTrackContext> options, IConfiguration configuration) : base(options)
     {
         _configuration = configuration;
     }
@@ -19,7 +19,7 @@ public class NeuroTrackContext : DbContext
     public DbSet<GsStatusRisk> GsStatusRisk { get; set; }
     public DbSet<GsLimits> GsLimits { get; set; }
     public DbSet<GsRole> GsRole { get; set; }
-    public DbSet<GsUser> GsUser { get; set; }
+    public DbSet<GsUsers> GsUser { get; set; }
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -62,7 +62,7 @@ public class NeuroTrackContext : DbContext
                 .HasColumnType("NUMBER")
                 .IsRequired();
 
-            entity.HasOne(e => e.GsUser)
+            entity.HasOne(e => e.GsUsers)
                 .WithMany()
                 .HasForeignKey(e => e.IdUser)
                 .HasConstraintName("FK_GS_USER_GS_DAILY_LOGS");
@@ -100,7 +100,7 @@ public class NeuroTrackContext : DbContext
                 .HasColumnType("NUMBER")
                 .IsRequired();
 
-            entity.HasOne(e => e.GsUser)
+            entity.HasOne(e => e.GsUsers)
                 .WithMany()
                 .HasForeignKey(e => e.IdUser)
                 .HasConstraintName("FK_GS_USER_GS_PREDICTIONS");
@@ -173,7 +173,7 @@ public class NeuroTrackContext : DbContext
                 .HasColumnType("NUMBER")
                 .IsRequired();
 
-            entity.HasOne(e => e.GsUser)
+            entity.HasOne(e => e.GsUsers)
                 .WithMany()
                 .HasForeignKey(e => e.IdUser)
                 .HasConstraintName("FK_GS_USER_GS_SCORES");
@@ -253,12 +253,12 @@ public class NeuroTrackContext : DbContext
                 .IsRequired();
         });
 
-        modelBuilder.Entity<GsUser>(entity =>
+        modelBuilder.Entity<GsUsers>(entity =>
         {
-            entity.ToTable("GS_USER");
+            entity.ToTable("GS_USERS");
 
             entity.HasKey(e => e.IdUser)
-                .HasName("PK_GS_USER");
+                .HasName("PK_GS_USERS");
 
             entity.Property(e => e.IdUser)
                 .HasColumnName("ID_USER")
@@ -277,7 +277,7 @@ public class NeuroTrackContext : DbContext
 
             entity.HasIndex(e => e.EmailUser)
                 .IsUnique()
-                .HasDatabaseName("UK_GS_USER_EMAIL_USER");
+                .HasDatabaseName("UK_GS_USERS_EMAIL_USER");
 
             entity.Property(e => e.PasswordUser)
                 .HasColumnName("PASSWORD_USER")
@@ -297,7 +297,7 @@ public class NeuroTrackContext : DbContext
             entity.HasOne(e => e.GsRole)
                 .WithMany()
                 .HasForeignKey(e => e.IdRole)
-                .HasConstraintName("FK_GS_ROLE_GS_USER");
+                .HasConstraintName("FK_GS_ROLE_GS_USERS");
 
             entity.Property(e => e.IdLimits)
                 .HasColumnName("ID_LIMITS")
@@ -306,8 +306,8 @@ public class NeuroTrackContext : DbContext
 
             entity.HasOne(e => e.GsLimits)
                 .WithOne()
-                .HasForeignKey<GsUser>(e => e.IdLimits)
-                .HasConstraintName("FK_GS_LIMITS_GS_USER");
+                .HasForeignKey<GsUsers>(e => e.IdLimits)
+                .HasConstraintName("FK_GS_LIMITS_GS_USERS");
         });
     }
 }

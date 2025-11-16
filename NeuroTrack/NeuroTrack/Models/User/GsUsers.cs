@@ -1,6 +1,6 @@
 ﻿namespace NeuroTrack.Models;
 
-public class GsUser
+public class GsUsers
 {
     public long IdUser { get; set; }
     

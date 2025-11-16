@@ -11,5 +11,5 @@ public class GsDailyLogs
     public DateTime LogDate { get; set; }
     
     public long IdUser { get; set; }
-    public GsUser GsUser { get; set; }
+    public GsUsers GsUsers { get; set; }
 }

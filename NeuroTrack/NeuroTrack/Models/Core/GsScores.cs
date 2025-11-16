@@ -16,7 +16,7 @@ public class GsScores
     public GsStatusRisk GsStatusRisk { get; set; }
     
     public long IdUser { get; set; }
-    public GsUser GsUser { get; set; }
+    public GsUsers GsUsers { get; set; }
     
     public long IdLog { get; set; }
     public GsDailyLogs GsDailyLogs { get; set; }
