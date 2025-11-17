@@ -18,7 +18,7 @@ public interface IGsLimitsRepository
         long? IdLimits,
         int? LimitHours,
         int? LimitMeetings,
-        DateTime CreatedAt,
+        DateTime? CreatedAt,
         int page,
         int pageSize,
         string sortBy,
