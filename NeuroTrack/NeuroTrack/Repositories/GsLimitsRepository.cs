@@ -21,26 +21,12 @@ public class GsLimitsRepository : IGsLimitsRepository
 
     public async Task<GsLimits?> GetByIdAsync(long id)
     {
-        var search = await _context.GsLimits.FindAsync(id);
-        
-        if (search == null)
-        {
-            throw new NotFoundException($"User with Id {id} not found");
-        }
-
-        return search;
+        return await _context.GsLimits.FindAsync(id);
     }
 
     public async Task<IEnumerable<GsLimits>> GetAllAsync()
     {
-        var search = await _context.GsLimits.ToListAsync();
-
-        if (search.Count == 0)
-        {
-            throw new NotFoundException("Not Logs Found");
-        }
-
-        return search;
+        return await _context.GsLimits.ToListAsync();
     }
 
     public async Task AddAsync(GsLimits gsLimits)
@@ -51,13 +37,6 @@ public class GsLimitsRepository : IGsLimitsRepository
 
     public async Task UpdateAsync(GsLimits gsLimits)
     {
-        var search = await _context.GsLimits.FindAsync(gsLimits.IdLimits);
-
-        if (search == null)
-        {
-            throw new NotFoundException($"Limit with Id {gsLimits.IdLimits} not found");
-        }
-
         _context.GsLimits.Update(gsLimits);
         await _context.SaveChangesAsync();
     }

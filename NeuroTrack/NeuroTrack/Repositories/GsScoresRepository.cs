@@ -21,26 +21,12 @@ public class GsScoresRepository :IGsScoresRepository
 
     public async Task<GsScores?> GetByIdAsync(long id)
     {
-        var search = await _context.GsScores.FindAsync(id);
-        
-        if (search == null)
-        {
-            throw new NotFoundException($"Score with Id {id} not found");
-        }
-
-        return search;
+        return await _context.GsScores.FindAsync(id);
     }
     
     public async Task<IEnumerable<GsScores>> GetAllAsync()
     {
-        var search = await _context.GsScores.ToListAsync();
-
-        if (search.Count == 0)
-        {
-            throw new NotFoundException("Not Scores Found");
-        }
-
-        return search;
+        return await _context.GsScores.ToListAsync();
     }
     
     public async Task AddAsync(GsScores gsScores)
@@ -51,13 +37,6 @@ public class GsScoresRepository :IGsScoresRepository
     
     public async Task UpdateAsync(GsScores gsScores)
     {
-        var search = await _context.GsScores.FindAsync(gsScores.IdScores);
-
-        if (search == null)
-        {
-            throw new NotFoundException($"Limit with Id {gsScores.IdScores} not found");
-        }
-
         _context.GsScores.Update(gsScores);
         await _context.SaveChangesAsync();
     }

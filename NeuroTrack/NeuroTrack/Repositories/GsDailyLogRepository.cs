@@ -21,26 +21,12 @@ public class GsDailyLogRepository : IGsDailyLogRepository
 
     public async Task<GsDailyLogs?> GetByIdAsync(long id)
     {
-        var search = await _context.GsDailyLogs.FindAsync(id);
-
-        if (search == null)
-        {
-            throw new NotFoundException($"User with Id {id} not found");
-        }
-
-        return search;
+        return await _context.GsDailyLogs.FindAsync(id);
     }
 
     public async Task<IEnumerable<GsDailyLogs>> GetAllAsync()
     {
-        var search = await _context.GsDailyLogs.ToListAsync();
-
-        if (search.Count == 0)
-        {
-            throw new NotFoundException("Not Logs Found");
-        }
-
-        return search;
+        return await _context.GsDailyLogs.ToListAsync();
     }
 
     public async Task AddAsync(GsDailyLogs gsDailyLogs)
@@ -51,13 +37,6 @@ public class GsDailyLogRepository : IGsDailyLogRepository
 
     public async Task UpdateAsync(GsDailyLogs gsDailyLogs)
     {
-        var search = await _context.GsDailyLogs.FindAsync(gsDailyLogs.IdLog);
-
-        if (search == null)
-        {
-            throw new NotFoundException($"Log with Id {gsDailyLogs.IdLog} not found");
-        }
-
         _context.GsDailyLogs.Update(gsDailyLogs);
         await _context.SaveChangesAsync();
     }
