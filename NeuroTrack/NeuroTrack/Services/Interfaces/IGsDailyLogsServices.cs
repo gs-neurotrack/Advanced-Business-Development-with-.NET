@@ -3,7 +3,7 @@ using NeuroTrack.DTOs;
 
 namespace NeuroTrack.Services.Interfaces;
 
-public interface IGsDailyLogServices
+public interface IGsDailyLogsServices
 {
     Task<GsDailyLogsDTO?> GetByIdAsync(long id);
 

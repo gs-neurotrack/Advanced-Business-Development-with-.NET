@@ -2,7 +2,7 @@
 
 namespace NeuroTrack.Repositories.Interfaces;
 
-public interface IGsDailyLogRepository
+public interface IGsDailyLogsRepository
 {
     Task<GsDailyLogs?> GetByIdAsync(long id);
 

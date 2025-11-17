@@ -5,11 +5,11 @@ using NeuroTrack.Repositories.Interfaces;
 
 namespace NeuroTrack.Repositories;
 
-public class GsDailyLogRepository : IGsDailyLogRepository
+public class GsDailyLogsRepository : IGsDailyLogsRepository
 {
     private readonly NeuroTrackContext _context;
 
-    public GsDailyLogRepository(NeuroTrackContext context)
+    public GsDailyLogsRepository(NeuroTrackContext context)
     {
         _context = context;
     }
