@@ -1,6 +1,6 @@
-﻿using MedSave.DTOs;
+﻿using NeuroTrack.DTOs;
 using NeuroTrack.Context;
-using NeuroTrack.DTOs;
+using NeuroTrack.DTOs.Page;
 using NeuroTrack.Models;
 using NeuroTrack.Repositories;
 using NeuroTrack.Services.Interfaces;

@@ -1,5 +1,5 @@
-﻿using MedSave.DTOs;
-using NeuroTrack.DTOs;
+﻿using NeuroTrack.DTOs;
+using NeuroTrack.DTOs.Page;
 
 namespace NeuroTrack.Services.Interfaces;
 

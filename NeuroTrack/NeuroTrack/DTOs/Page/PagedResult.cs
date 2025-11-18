@@ -1,4 +1,4 @@
-﻿namespace MedSave.DTOs;
+﻿namespace NeuroTrack.DTOs.Page;
 
 public class PagedResult<T>
 {

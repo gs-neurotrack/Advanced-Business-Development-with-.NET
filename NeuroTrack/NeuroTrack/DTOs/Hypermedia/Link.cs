@@ -1,4 +1,4 @@
-﻿namespace MedSave.DTOs.Hypermedia;
+﻿namespace NeuroTrack.DTOs.Hypermedia;
 
 public class Link
 {
