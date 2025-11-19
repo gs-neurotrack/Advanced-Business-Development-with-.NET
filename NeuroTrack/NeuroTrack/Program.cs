@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using NeuroTrack.Context;
 using NeuroTrack.Repositories;
 using NeuroTrack.Repositories.Interfaces;
@@ -11,31 +12,50 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddControllers();
-        
+
+        // Swagger
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-        
+
+        // CORS configurado
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAll", policy =>
+                policy
+                    .AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+            );
+        });
+
+        // DbContext
         builder.Services.AddDbContext<NeuroTrackContext>();
 
+        // Repositories
         builder.Services.AddScoped<IGsDailyLogsRepository, GsDailyLogsRepository>();
         builder.Services.AddScoped<IGsLimitsRepository, GsLimitsRepository>();
         builder.Services.AddScoped<IGsScoresRepository, GsScoresRepository>();
 
+        // Services
         builder.Services.AddScoped<IGsDailyLogsServices, GsDailyLogsServices>();
         builder.Services.AddScoped<IGsLimitsServices, GsLimitsServices>();
         builder.Services.AddScoped<IGsScoresServices, GsScoresServices>();
-        
+
         var app = builder.Build();
-        
-        app.UseSwagger(); 
+
+        // Swagger
+        app.UseSwagger();
         app.UseSwaggerUI(c =>
         {
             c.SwaggerEndpoint("/swagger/v1/swagger.json", "NeuroTrack API v1");
             c.RoutePrefix = "swagger";
         });
 
-        app.MapControllers();
+        // Middleware
+        app.UseHttpsRedirection();
+        app.UseCors("AllowAll");
 
+        app.MapControllers();
         app.Run();
     }
 }
