@@ -1,4 +1,8 @@
 using NeuroTrack.Context;
+using NeuroTrack.Repositories;
+using NeuroTrack.Repositories.Interfaces;
+using NeuroTrack.Services;
+using NeuroTrack.Services.Interfaces;
 
 public class Program
 {
@@ -12,17 +16,16 @@ public class Program
         builder.Services.AddSwaggerGen();
         
         builder.Services.AddDbContext<NeuroTrackContext>();
+
+        builder.Services.AddScoped<IGsDailyLogsRepository, GsDailyLogsRepository>();
+        builder.Services.AddScoped<IGsLimitsRepository, GsLimitsRepository>();
+        builder.Services.AddScoped<IGsScoresRepository, GsScoresRepository>();
+
+        builder.Services.AddScoped<IGsDailyLogsServices, GsDailyLogsServices>();
+        builder.Services.AddScoped<IGsLimitsServices, GsLimitsServices>();
+        builder.Services.AddScoped<IGsScoresServices, GsScoresServices>();
         
         var app = builder.Build();
-        
-        using (var scope = app.Services.CreateScope())
-        {
-            var db = scope.ServiceProvider.GetRequiredService<NeuroTrackContext>();
-
-            var count = db.GsUser.Count();
-
-            Console.WriteLine($"Usuários cadastrados: {count}");
-        }
         
         app.UseSwagger(); 
         app.UseSwaggerUI(c =>

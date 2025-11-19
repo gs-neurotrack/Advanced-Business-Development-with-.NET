@@ -4,15 +4,16 @@ using NeuroTrack.DTOs.Page;
 using NeuroTrack.Models;
 using NeuroTrack.Repositories;
 using NeuroTrack.Services.Interfaces;
+using NeuroTrack.Repositories.Interfaces;
 
 namespace NeuroTrack.Services;
 
 public class GsScoresServices : IGsScoresServices
 {
-    private readonly GsScoresRepository _gsScoresRepository;
+    private readonly IGsScoresRepository _gsScoresRepository;
     private readonly NeuroTrackContext _context;
 
-    public GsScoresServices(GsScoresRepository gsScoresRepository, NeuroTrackContext context)
+    public GsScoresServices(IGsScoresRepository gsScoresRepository, NeuroTrackContext context)
     {
         _gsScoresRepository = gsScoresRepository;
         _context = context;

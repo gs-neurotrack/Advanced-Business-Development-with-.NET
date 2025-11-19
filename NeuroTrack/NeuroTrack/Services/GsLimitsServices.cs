@@ -4,15 +4,16 @@ using NeuroTrack.DTOs.Page;
 using NeuroTrack.Models;
 using NeuroTrack.Repositories;
 using NeuroTrack.Services.Interfaces;
+using NeuroTrack.Repositories.Interfaces;
 
 namespace NeuroTrack.Services;
 
 public class GsLimitsServices : IGsLimitsServices
 {
-    private readonly GsLimitsRepository _gsLimitsRepository;
+    private readonly IGsLimitsRepository _gsLimitsRepository;
     private readonly NeuroTrackContext _context;
 
-    public GsLimitsServices(GsLimitsRepository gsLimitsRepository, NeuroTrackContext context)
+    public GsLimitsServices(IGsLimitsRepository gsLimitsRepository, NeuroTrackContext context)
     {
         _gsLimitsRepository = gsLimitsRepository;
         _context = context;

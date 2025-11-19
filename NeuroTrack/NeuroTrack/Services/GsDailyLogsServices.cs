@@ -4,15 +4,16 @@ using NeuroTrack.DTOs.Page;
 using NeuroTrack.Models;
 using NeuroTrack.Repositories;
 using NeuroTrack.Services.Interfaces;
+using NeuroTrack.Repositories.Interfaces;
 
 namespace NeuroTrack.Services;
 
 public class GsDailyLogsServices : IGsDailyLogsServices
 {
-    private readonly GsDailyLogsRepository _gsDailyLogsRepository;
+    private readonly IGsDailyLogsRepository _gsDailyLogsRepository;
     private readonly NeuroTrackContext _context;
 
-    public GsDailyLogsServices(GsDailyLogsRepository gsDailyLogsRepository, NeuroTrackContext context)
+    public GsDailyLogsServices(IGsDailyLogsRepository gsDailyLogsRepository, NeuroTrackContext context)
     {
         _gsDailyLogsRepository = gsDailyLogsRepository;
         _context = context;
