@@ -42,12 +42,12 @@ O NeuroTrack será uma solução Full-stack, utilizando Oracle Database para o a
 ### Funcionalidades Principais
 
 1. **Lorem Ipsum**:
-    - Lorem ipsum dolor sit amet
-    - Lorem ipsum dolor sit amet
+   - Lorem ipsum dolor sit amet
+   - Lorem ipsum dolor sit amet
 
 2. **Lorem Ipsum**:
-    - Lorem ipsum dolor sit amet
-    - Lorem ipsum dolor sit amet
+   - Lorem ipsum dolor sit amet
+   - Lorem ipsum dolor sit amet
 
 Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
 
@@ -73,6 +73,7 @@ Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
 > Por padrão, a API roda em **http://localhost:5162**
 
 ---
+
 # 🧠 **Daily Logs — `/api/GsDailyLogs`**
 
 | Método | Endpoint | Descrição | Corpo da Requisição (JSON) | Resposta Esperada |
@@ -106,6 +107,19 @@ Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
 | **POST** | `/api/GsScores` | Registra um novo score. | `{ "scoreValue": 72.5, "riskStatusId": 2, "idUser": 12 }` | 201 Created |
 | **DELETE** | `/api/GsScores/{id}` | Remove um score pelo ID. | — | 200 OK |
 | **GET** | `/api/GsScores/search` | Busca scores com filtros e ordenação. | — | 200 OK com paginação. |
+
+---
+
+# 🔮 **Predictions — `/api/GsPredictions`**
+
+| Método | Endpoint | Descrição | Body | Resposta |
+|--------|----------|-----------|-------|----------|
+| **GET** | `/api/GsPredictions` | Lista todas as previsões geradas pelo modelo. | — | 200 OK |
+| **GET** | `/api/GsPredictions/{id}` | Retorna uma previsão específica. | — | 200 OK ou 404 |
+| **POST** | `/api/GsPredictions` | Registra uma nova previsão de estresse. | `{ "stressPredicted": 0.85, "message": "Alto risco", "idUser": 12, "idScores": 25, "idStatusRisk": 3 }` | 201 Created |
+| **PUT** | `/api/GsPredictions` | Atualiza uma previsão existente. | `{ "idPrediction": 10, "stressPredicted": 0.70, "message": "Risco moderado", ... }` | 200 OK |
+| **DELETE** | `/api/GsPredictions/{id}` | Remove uma previsão pelo ID. | — | 200 OK |
+| **GET** | `/api/GsPredictions/search` | Busca previsões por filtros (status, usuário, score, data). | — | 200 OK com paginação. |
 
 ---
 
@@ -158,6 +172,24 @@ Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
 
 ---
 
+## 🔮 Predictions — `/api/GsPredictions/search`
+
+**Parâmetros suportados:**
+- `IdPrediction`
+- `DatePredicted`
+- `IdUser`
+- `IdScores`
+- `IdStatusRisk`
+- `page`, `pageSize`
+- `sortBy`
+- `sortDir`
+
+**Exemplo**
+
+    GET /api/GsPredictions/search?IdUser=12&page=1&pageSize=10&sortBy=idPrediction&sortDir=desc
+
+---
+
 # 🧩 **HATEOAS — Exemplo de Resposta Completa**
 
 ```json
@@ -207,14 +239,14 @@ Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
    ```
 
 4. **Configure a conexão com o banco**
-    - No `appsettings.json`, defina:
-      ```json
-      {
-        "ConnectionStrings": {
-          "DefaultConnection": "User Id=USUARIO;Password=SENHA;Data Source=HOST:PORTA/SERVICO"
-        }
-      }
-      ```
+   - No `appsettings.json`, defina:
+     ```json
+     {
+       "ConnectionStrings": {
+         "DefaultConnection": "User Id=USUARIO;Password=SENHA;Data Source=HOST:PORTA/SERVICO"
+       }
+     }
+     ```
 
 5. **Atualize o banco de dados (opcional)**
    ```bash
@@ -237,4 +269,4 @@ Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
    ```
    Lá você poderá **testar todos os endpoints da API**, incluindo `GET`, `POST`, `PUT`, `DELETE` e `SEARCH`.
 
---- 
+---
