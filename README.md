@@ -175,3 +175,66 @@ Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
     { "rel": "search", "href": "/api/GsDailyLogs/search", "method": "GET" }
   ]
 }
+```
+---
+## ⚙️ Como Rodar o Projeto
+
+### Pré-requisitos
+
+1. **.NET 9.0 SDK**
+2. **Oracle Database + ODP.NET**
+3. **Entity Framework Core com Oracle Provider**
+4. **Visual Studio ou Rider (opcional, mas recomendado)**
+
+---
+
+### 🚀 Executando o Projeto
+
+1. **Clone o repositório**
+   ```bash
+   git clone https://github.com/Cleytonrik99/MedSave---DotNet.git
+   cd MedSave---DotNet
+   ```
+
+2. **Restaure as dependências**
+   ```bash
+   dotnet restore
+   ```
+
+3. **Compile o projeto**
+   ```bash
+   dotnet build
+   ```
+
+4. **Configure a conexão com o banco**
+   - No `appsettings.json`, defina:
+     ```json
+     {
+       "ConnectionStrings": {
+         "DefaultConnection": "User Id=USUARIO;Password=SENHA;Data Source=HOST:PORTA/SERVICO"
+       }
+     }
+     ```
+
+5. **Atualize o banco de dados (opcional)**
+   ```bash
+   dotnet ef database update
+   ```
+
+6. **Execute o servidor**
+   ```bash
+   dotnet run
+   ```
+   O servidor iniciará em:
+   ```
+   http://localhost:5000
+   ```
+
+7. **Acesse o Swagger**
+   Abra o navegador e vá até:
+   ```
+   http://localhost:5000/swagger
+   ```
+   Lá você poderá **testar todos os endpoints da API**, incluindo `GET`, `POST`, `PUT`, `DELETE` e `SEARCH`.
+
+---
