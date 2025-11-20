@@ -34,11 +34,13 @@ public class Program
         builder.Services.AddScoped<IGsDailyLogsRepository, GsDailyLogsRepository>();
         builder.Services.AddScoped<IGsLimitsRepository, GsLimitsRepository>();
         builder.Services.AddScoped<IGsScoresRepository, GsScoresRepository>();
+        builder.Services.AddScoped<IGsPredictionsRepository, GsPredictionsRepository>();
 
         // Services
         builder.Services.AddScoped<IGsDailyLogsServices, GsDailyLogsServices>();
         builder.Services.AddScoped<IGsLimitsServices, GsLimitsServices>();
         builder.Services.AddScoped<IGsScoresServices, GsScoresServices>();
+        builder.Services.AddScoped<IGsPredictionsServices, GsPredictionsServices>();
 
         var app = builder.Build();
 
