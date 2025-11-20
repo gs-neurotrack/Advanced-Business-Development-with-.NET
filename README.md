@@ -73,3 +73,105 @@ Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
 > Por padrão, a API roda em **http://localhost:5162**
 
 ---
+# 🧠 **Daily Logs — `/api/GsDailyLogs`**
+
+| Método | Endpoint | Descrição | Corpo da Requisição (JSON) | Resposta Esperada |
+|--------|-----------|------------|-----------------------------|-------------------|
+| **GET** | `/api/GsDailyLogs` | Retorna todos os logs diários (com HATEOAS). | — | 200 OK com coleção + links. |
+| **GET** | `/api/GsDailyLogs/{id}` | Retorna um log específico. | — | 200 OK ou 404 Not Found. |
+| **POST** | `/api/GsDailyLogs` | Cria um novo registro de atividade diária. | `{ "workHours": 9, "meetings": 3, "idUser": 12 }` | 201 Created (objeto + links). |
+| **DELETE** | `/api/GsDailyLogs/{id}` | Remove um log existente. | — | 200 OK (mensagem + links). |
+| **GET** | `/api/GsDailyLogs/search` | Busca logs diários com filtros e paginação. | — | 200 OK com `PagedResult` + links. |
+
+---
+
+# 🔐 **Limits — `/api/GsLimits`**
+
+| Método | Endpoint | Descrição | Body | Resposta |
+|--------|----------|-----------|-------|----------|
+| **GET** | `/api/GsLimits` | Retorna todos os limites configurados (horas e reuniões). | — | 200 OK |
+| **GET** | `/api/GsLimits/{id}` | Retorna limite específico. | — | 200 OK ou 404 |
+| **POST** | `/api/GsLimits` | Cria novos limites. | `{ "limitHours": 8, "limitMeetings": 5 }` | 201 Created |
+| **PUT** | `/api/GsLimits/{id}` | Atualiza limites existentes. | `{ "limitHours": 10, "limitMeetings": 6 }` | 204 No Content |
+| **GET** | `/api/GsLimits/search` | Busca limites com filtros e paginação. | — | 200 OK |
+
+---
+
+# 📊 **Scores — `/api/GsScores`**
+
+| Método | Endpoint | Descrição | Body | Resposta |
+|--------|----------|-----------|-------|----------|
+| **GET** | `/api/GsScores` | Lista todos os scores registrados. | — | 200 OK |
+| **GET** | `/api/GsScores/{id}` | Retorna um score específico. | — | 200 OK ou 404 |
+| **POST** | `/api/GsScores` | Registra um novo score. | `{ "scoreValue": 72.5, "riskStatusId": 2, "idUser": 12 }` | 201 Created |
+| **DELETE** | `/api/GsScores/{id}` | Remove um score pelo ID. | — | 200 OK |
+| **GET** | `/api/GsScores/search` | Busca scores com filtros e ordenação. | — | 200 OK com paginação. |
+
+---
+
+# 🔍 **Exemplos de Busca com Filtros (Search)**
+
+## 🧠 Daily Logs — `/api/GsDailyLogs/search`
+
+**Parâmetros suportados:**
+
+- `IdLog` *(long, opcional)*  
+- `WorkHours` *(int, opcional)*  
+- `IdUser` *(long, opcional)*  
+- `page` *(int)*  
+- `pageSize` *(int)*  
+- `sortBy` *(idLog, workHours, idUser)*  
+- `sortDir` *(asc/desc)*  
+
+**Exemplo**
+
+    GET /api/GsDailyLogs/search?IdUser=12&page=1&pageSize=5&sortBy=idLog&sortDir=asc
+
+---
+
+## 📊 Scores — `/api/GsScores/search`
+
+**Parâmetros suportados:**
+
+- `IdUser`
+- `RiskStatusId`
+- `page`, `pageSize`
+- `sortBy`
+- `sortDir`
+
+**Exemplo**
+
+    GET /api/GsScores/search?IdUser=12&page=1&pageSize=10
+
+---
+
+## 🔐 Limits — `/api/GsLimits/search`
+
+**Parâmetros suportados:**
+- `limitHours`
+- `limitMeetings`
+- Paginação (`page`, `pageSize`)
+
+**Exemplo**
+
+    GET /api/GsLimits/search?limitHours=8&page=1&pageSize=5
+
+---
+
+# 🧩 **HATEOAS — Exemplo de Resposta Completa**
+
+```json
+{
+  "data": {
+    "idLog": 25,
+    "workHours": 9,
+    "meetings": 3,
+    "idUser": 12
+  },
+  "_links": [
+    { "rel": "self", "href": "/api/GsDailyLogs/25", "method": "GET" },
+    { "rel": "delete", "href": "/api/GsDailyLogs/25", "method": "DELETE" },
+    { "rel": "list", "href": "/api/GsDailyLogs", "method": "GET" },
+    { "rel": "search", "href": "/api/GsDailyLogs/search", "method": "GET" }
+  ]
+}
