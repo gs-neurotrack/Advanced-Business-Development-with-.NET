@@ -1,12 +1,12 @@
-# NeuroTrack: Sistema de Gestão de Lorem Ipsum
+# NeuroTrack: Sistema de Monitoramento de Estresse e Bem-Estar
 
 ## Definição do Projeto
 
 ### O que é o NeuroTrack?
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam hendrerit ornare urna, ut porttitor purus ornare a. Aliquam posuere dignissim nunc fringilla bibendum. Nunc suscipit egestas metus, nec condimentum leo viverra a. Curabitur a nibh urna. Duis bibendum facilisis fermentum. Praesent dapibus a lectus a vulputate. Duis sit amet ante.
+O NeuroTrack é uma solução tecnológica desenvolvida para monitorar, analisar e prever o nível de estresse de colaboradores em ambientes corporativos.Utilizando dados comportamentais capturados pelo aplicativo mobile como velocidade de uso, quantidade de cliques, double-clicks, tempo ativo, horas trabalhadas e número de reuniões,aliado a uma camada de análise em Python com algoritmos de IA.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam hendrerit ornare urna, ut porttitor purus ornare a. Aliquam posuere dignissim nunc fringilla bibendum. Nunc suscipit egestas metus, nec condimentum leo viverra a. Curabitur a nibh urna. Duis bibendum facilisis fermentum. Praesent dapibus a lectus a vulputate. Duis sit amet ante.
+O objetivo é prevenir burnout digital, melhorar o bem-estar e apoiar gestores na tomada de decisões relacionadas à saúde mental e produtividade.
 ---
 ## 🏗️ Arquitetura e Tecnologia
 
@@ -37,7 +37,7 @@ A API em **.NET 9** segue uma arquitetura em **camadas**, com separação clara 
 
 ## Escopo 
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam hendrerit ornare urna, ut porttitor purus ornare a. Aliquam posuere dignissim nunc fringilla bibendum. Nunc suscipit egestas metus, nec condimentum leo viverra a. Curabitur a nibh urna. Duis bibendum facilisis fermentum. Praesent dapibus a lectus a vulputate. Duis sit amet ante.
+O NeuroTrack será uma solução Full-stack, utilizando Oracle Database para o armazenamento dos dados, React Native para a interface móvel, Java e DotNet para backend e microserviços. O sistema terá as seguintes funcionalidades principais:
 
 ### Funcionalidades Principais
 
@@ -192,8 +192,8 @@ Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
 
 1. **Clone o repositório**
    ```bash
-   git clone https://github.com/Cleytonrik99/MedSave---DotNet.git
-   cd MedSave---DotNet
+   git clone https://github.com/gs-neurotrack/Advanced-Business-Development-with-.NET.git
+   cd Advanced-Business-Development-with-.Net
    ```
 
 2. **Restaure as dependências**
@@ -227,13 +227,13 @@ Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
    ```
    O servidor iniciará em:
    ```
-   http://localhost:5000
+   http://localhost:5162
    ```
 
 7. **Acesse o Swagger**
    Abra o navegador e vá até:
    ```
-   http://localhost:5000/swagger
+   http://localhost:5162/swagger
    ```
    Lá você poderá **testar todos os endpoints da API**, incluindo `GET`, `POST`, `PUT`, `DELETE` e `SEARCH`.
 
