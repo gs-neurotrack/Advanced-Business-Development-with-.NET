@@ -43,15 +43,11 @@ O NeuroTrack será uma solução Full-stack, utilizando Oracle Database para o a
 
 ### Funcionalidades Principais
 
-1. **Lorem Ipsum**:
-   - Lorem ipsum dolor sit amet
-   - Lorem ipsum dolor sit amet
+1. **Alertas Inteligentes**:
+   - Notificações em tempo real sobre sua saúde mental.
 
-2. **Lorem Ipsum**:
-   - Lorem ipsum dolor sit amet
-   - Lorem ipsum dolor sit amet
-
-Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet 
+2. **Relatórios Gerenciais**:
+   - Dashboards para acompanhamento da sua sáude mental.
 
 ---
 
@@ -59,8 +55,9 @@ Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
 
 ### Requisitos Funcionais
 
-1. **Lorem ipsum dolor sit amet**
-2. **Lorem ipsum dolor sit amet**
+1. **Cadastro de Usuários**
+2. **Login de Usuários**
+3. **Lorem Ipsum**
 
 ### Requisitos Não Funcionais
 
