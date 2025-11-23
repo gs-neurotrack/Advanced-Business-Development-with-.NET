@@ -1,3 +1,5 @@
+![Logo NeuroTrack](images/logo.jpg)
+
 # NeuroTrack: Sistema de Monitoramento de Estresse e Bem-Estar
 
 ## Definição do Projeto
