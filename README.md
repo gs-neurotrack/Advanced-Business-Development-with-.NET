@@ -57,7 +57,9 @@ O NeuroTrack será uma solução Full-stack, utilizando Oracle Database para o a
 
 1. **Cadastro de Usuários**
 2. **Login de Usuários**
-3. **Lorem Ipsum**
+3. **Contabilizar Clicks**
+4. **Contabilizar Double-clicks**
+5. **Medir e Registrar Comportamento do Usuário**
 
 ### Requisitos Não Funcionais
 
