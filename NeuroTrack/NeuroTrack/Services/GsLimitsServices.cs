@@ -18,11 +18,9 @@ public class GsLimitsServices : IGsLimitsServices
         _gsLimitsRepository = gsLimitsRepository;
         _context = context;
     }
-    
-    public class NotFoundException : Exception
-    {
-        public NotFoundException(string message) : base(message) {}
-    }
+
+    // ❌ REMOVIDO: inner NotFoundException
+    // public class NotFoundException : Exception { ... }
 
     public async Task<GsLimitsDTO?> GetByIdAsync(long id)
     {
@@ -30,7 +28,8 @@ public class GsLimitsServices : IGsLimitsServices
         
         if (limit == null)
         {
-            throw new NotFoundException($"Log with id {id} not found.");
+            // Usa a mesma exceção que o controller captura
+            throw new GsLimitsRepository.NotFoundException($"Limit with id {id} not found.");
         }
 
         return new GsLimitsDTO(
@@ -39,7 +38,6 @@ public class GsLimitsServices : IGsLimitsServices
             LimitMeetings: limit.LimitMeetings,
             CreatedAt: limit.CreatedAt
         );
-
     }
 
     public async Task<IEnumerable<GsLimitsDTO>> GetAllAsync()
@@ -56,7 +54,8 @@ public class GsLimitsServices : IGsLimitsServices
 
     public async Task<GsLimitsDTO> AddAsync(GsLimitsDTO gsLimitsDto)
     {
-        if (gsLimitsDto == null) throw new ArgumentNullException(nameof(gsLimitsDto), "Limit Object can't be null.");
+        if (gsLimitsDto == null)
+            throw new ArgumentNullException(nameof(gsLimitsDto), "Limit Object can't be null.");
 
         var limit = new GsLimits
         {
@@ -78,13 +77,15 @@ public class GsLimitsServices : IGsLimitsServices
 
     public async Task UpdateAsync(GsLimitsDTO gsLimitsDto)
     {
-        if (gsLimitsDto == null) throw new ArgumentNullException(nameof(gsLimitsDto), "Limit Object can't be null.");
+        if (gsLimitsDto == null)
+            throw new ArgumentNullException(nameof(gsLimitsDto), "Limit Object can't be null.");
 
         var existingLimit = await _gsLimitsRepository.GetByIdAsync(gsLimitsDto.IdLimits);
         
         if (existingLimit == null)
         {
-            throw new NotFoundException($"Limit With Id {gsLimitsDto.IdLimits} Not Founded.");
+            // Mesma exceção do repositório
+            throw new GsLimitsRepository.NotFoundException($"Limit with Id {gsLimitsDto.IdLimits} not found.");
         }
 
         existingLimit.IdLimits = gsLimitsDto.IdLimits;
@@ -97,18 +98,8 @@ public class GsLimitsServices : IGsLimitsServices
 
     public async Task DeleteAsync(long id)
     {
-        try
-        {
-            await _gsLimitsRepository.DeleteAsync(id);
-        }
-        catch (GsLimitsRepository.NotFoundException ex)
-        {
-            throw new GsLimitsRepository.NotFoundException($"Limit with Id {id} not founded.");
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"Error when trying to delete the log with id {id}: {ex.Message}");
-        }
+        // Deixa a NotFoundException do repositório subir direto pro controller
+        await _gsLimitsRepository.DeleteAsync(id);
     }
 
     public async Task<PagedResult<GsLimitsDTO>> SearchAsync(
@@ -151,6 +142,5 @@ public class GsLimitsServices : IGsLimitsServices
                 TotalPages = totalPages
             }
         };
-        
     }
 }

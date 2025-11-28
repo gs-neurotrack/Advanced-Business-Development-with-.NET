@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using NeuroTrack.DTOs;
 using NeuroTrack.DTOs.Hypermedia;
 using NeuroTrack.Services.Interfaces;
@@ -71,7 +72,16 @@ public class GsLimitsController : ControllerBase
     // =============================================================
     // GET ALL
     // =============================================================
+
+    /// <summary>
+    /// Retorna todos os limites configurados.
+    /// </summary>
+    /// <remarks>
+    /// Endpoint não paginado. Retorna a coleção completa de limites (horas e reuniões) com links HATEOAS.
+    /// </remarks>
     [HttpGet]
+    [ProducesResponseType(typeof(CollectionResource<GsLimitsDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAll()
     {
         try
@@ -113,7 +123,16 @@ public class GsLimitsController : ControllerBase
     // =============================================================
     // GET BY ID
     // =============================================================
+
+    /// <summary>
+    /// Obtém um limite específico pelo ID.
+    /// </summary>
+    /// <param name="id">ID do limite.</param>
+    /// <returns>Recurso de limite com links HATEOAS.</returns>
     [HttpGet("{id}")]
+    [ProducesResponseType(typeof(Resource<GsLimitsDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetById(long id)
     {
         try
@@ -146,7 +165,16 @@ public class GsLimitsController : ControllerBase
     // =============================================================
     // POST CREATE
     // =============================================================
+
+    /// <summary>
+    /// Adiciona um novo limite de horas e reuniões.
+    /// </summary>
+    /// <param name="dto">Dados do limite a ser criado.</param>
+    /// <returns>Recurso criado com links HATEOAS.</returns>
     [HttpPost]
+    [ProducesResponseType(typeof(Resource<GsLimitsDTO>), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Add([FromBody] GsLimitsDTO dto)
     {
         if (dto == null)
@@ -166,7 +194,17 @@ public class GsLimitsController : ControllerBase
     // =============================================================
     // PUT UPDATE
     // =============================================================
+
+    /// <summary>
+    /// Atualiza um limite existente.
+    /// </summary>
+    /// <param name="dto">Dados atualizados do limite.</param>
+    /// <returns>Mensagem de sucesso e links HATEOAS.</returns>
     [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Update([FromBody] GsLimitsDTO dto)
     {
         try
@@ -197,7 +235,16 @@ public class GsLimitsController : ControllerBase
     // =============================================================
     // DELETE
     // =============================================================
+
+    /// <summary>
+    /// Deleta um limite pelo ID.
+    /// </summary>
+    /// <param name="id">ID do limite a ser deletado.</param>
+    /// <returns>Mensagem de confirmação e links para ações relacionadas.</returns>
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Delete(long id)
     {
         try
@@ -233,7 +280,23 @@ public class GsLimitsController : ControllerBase
     // =============================================================
     // SEARCH
     // =============================================================
+
+    /// <summary>
+    /// Busca limites com filtros, paginação e ordenação.
+    /// </summary>
+    /// <param name="idLimits">ID do limite para filtro opcional.</param>
+    /// <param name="limitHours">Quantidade máxima de horas para filtro opcional.</param>
+    /// <param name="limitMeetings">Quantidade máxima de reuniões para filtro opcional.</param>
+    /// <param name="createdAt">Data de criação para filtro opcional.</param>
+    /// <param name="page">Número da página (padrão 1).</param>
+    /// <param name="pageSize">Tamanho da página (padrão 10).</param>
+    /// <param name="sortBy">Campo de ordenação (padrão "idLimits").</param>
+    /// <param name="sortDir">Direção da ordenação ("asc" ou "desc").</param>
+    /// <returns>Coleção paginada de limites com links HATEOAS.</returns>
     [HttpGet("search")]
+    [ProducesResponseType(typeof(CollectionResource<GsLimitsDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Search(
         [FromQuery] long? idLimits,
         [FromQuery] int? limitHours,

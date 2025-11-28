@@ -18,11 +18,9 @@ public class GsDailyLogsServices : IGsDailyLogsServices
         _gsDailyLogsRepository = gsDailyLogsRepository;
         _context = context;
     }
-    
-    public class NotFoundException : Exception
-    {
-        public NotFoundException(string message) : base(message) {}
-    }
+
+    // ❌ REMOVE ESSA INNER CLASS
+    // public class NotFoundException : Exception { ... }
 
     public async Task<GsDailyLogsDTO?> GetByIdAsync(long id)
     {
@@ -30,7 +28,8 @@ public class GsDailyLogsServices : IGsDailyLogsServices
 
         if (log == null)
         {
-            throw new NotFoundException($"Log with id {id} not found.");
+            // Usa a mesma NotFoundException que o controller captura
+            throw new GsDailyLogsRepository.NotFoundException($"Log with id {id} not found.");
         }
 
         return new GsDailyLogsDTO
@@ -58,7 +57,8 @@ public class GsDailyLogsServices : IGsDailyLogsServices
 
     public async Task<GsDailyLogsDTO> AddAsync(GsDailyLogsDTO gsDailyLogsDto)
     {
-        if (gsDailyLogsDto == null) throw new ArgumentNullException(nameof(gsDailyLogsDto), "Daily Log Object can't be null.");
+        if (gsDailyLogsDto == null)
+            throw new ArgumentNullException(nameof(gsDailyLogsDto), "Daily Log Object can't be null.");
 
         var log = new GsDailyLogs
         {
@@ -83,15 +83,14 @@ public class GsDailyLogsServices : IGsDailyLogsServices
     public async Task UpdateAsync(GsDailyLogsDTO gsDailyLogsDto)
     {
         if (gsDailyLogsDto == null)
-        {
             throw new ArgumentNullException(nameof(gsDailyLogsDto), "Daily Log Object can't be null.");
-        }
 
         var existingLog = await _gsDailyLogsRepository.GetByIdAsync(gsDailyLogsDto.IdLog);
 
         if (existingLog == null)
         {
-            throw new NotFoundException($"Log With Id {gsDailyLogsDto.IdLog} Not Founded.");
+            // Mesma exceção do repositório
+            throw new GsDailyLogsRepository.NotFoundException($"Log with Id {gsDailyLogsDto.IdLog} not found.");
         }
 
         existingLog.IdLog = gsDailyLogsDto.IdLog;
@@ -101,23 +100,12 @@ public class GsDailyLogsServices : IGsDailyLogsServices
         existingLog.WorkHours = gsDailyLogsDto.WorkHours;
 
         await _gsDailyLogsRepository.UpdateAsync(existingLog);
-
     }
 
     public async Task DeleteAsync(long id)
     {
-        try
-        {
-            await _gsDailyLogsRepository.DeleteAsync(id);
-        }
-        catch (GsDailyLogsRepository.NotFoundException ex)
-        {
-            throw new GsDailyLogsRepository.NotFoundException($"Log with ID {id} not founded.");
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"Error when Trying to delete the log with id {id}: {ex.Message}");
-        }
+        // Não precisa capturar e relançar, deixa a NotFoundException subir
+        await _gsDailyLogsRepository.DeleteAsync(id);
     }
 
     public async Task<PagedResult<GsDailyLogsDTO>> SearchAsync(

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using NeuroTrack.DTOs.Hypermedia;
 using NeuroTrack.DTOs;
 using NeuroTrack.Services.Interfaces;
@@ -71,7 +72,16 @@ public class GsDailyLogsController : ControllerBase
     // =============================================================
     // GET ALL
     // =============================================================
+
+    /// <summary>
+    /// Retorna todos os logs diários cadastrados.
+    /// </summary>
+    /// <remarks>
+    /// Endpoint não paginado. Retorna a coleção completa de GsDailyLogs com links HATEOAS.
+    /// </remarks>
     [HttpGet]
+    [ProducesResponseType(typeof(CollectionResource<GsDailyLogsDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAll()
     {
         try
@@ -113,7 +123,16 @@ public class GsDailyLogsController : ControllerBase
     // =============================================================
     // GET BY ID
     // =============================================================
+
+    /// <summary>
+    /// Obtém um log diário específico pelo ID.
+    /// </summary>
+    /// <param name="id">ID do log diário.</param>
+    /// <returns>Recurso GsDailyLogs com links HATEOAS.</returns>
     [HttpGet("{id}")]
+    [ProducesResponseType(typeof(Resource<GsDailyLogsDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetById(long id)
     {
         try
@@ -146,7 +165,16 @@ public class GsDailyLogsController : ControllerBase
     // =============================================================
     // POST CREATE
     // =============================================================
+
+    /// <summary>
+    /// Adiciona um novo log diário.
+    /// </summary>
+    /// <param name="dto">Dados do log diário a ser criado.</param>
+    /// <returns>Recurso criado com links HATEOAS.</returns>
     [HttpPost]
+    [ProducesResponseType(typeof(Resource<GsDailyLogsDTO>), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Add([FromBody] GsDailyLogsDTO dto)
     {
         if (dto == null)
@@ -166,7 +194,17 @@ public class GsDailyLogsController : ControllerBase
     // =============================================================
     // PUT UPDATE
     // =============================================================
+
+    /// <summary>
+    /// Atualiza um log diário existente.
+    /// </summary>
+    /// <param name="dto">Dados atualizados do log diário.</param>
+    /// <returns>Mensagem de sucesso e links HATEOAS.</returns>
     [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Update([FromBody] GsDailyLogsDTO dto)
     {
         try
@@ -197,7 +235,16 @@ public class GsDailyLogsController : ControllerBase
     // =============================================================
     // DELETE
     // =============================================================
+
+    /// <summary>
+    /// Deleta um log diário pelo ID.
+    /// </summary>
+    /// <param name="id">ID do log diário a ser deletado.</param>
+    /// <returns>Mensagem de confirmação e links para ações relacionadas.</returns>
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Delete(long id)
     {
         try
@@ -233,7 +280,22 @@ public class GsDailyLogsController : ControllerBase
     // =============================================================
     // SEARCH
     // =============================================================
+
+    /// <summary>
+    /// Busca logs diários com filtros, paginação e ordenação.
+    /// </summary>
+    /// <param name="idLog">ID do log para filtro opcional.</param>
+    /// <param name="workHours">Quantidade de horas trabalhadas para filtro opcional.</param>
+    /// <param name="idUser">ID do usuário para filtro opcional.</param>
+    /// <param name="page">Número da página (padrão 1).</param>
+    /// <param name="pageSize">Tamanho da página (padrão 10).</param>
+    /// <param name="sortBy">Campo de ordenação (padrão "idLog").</param>
+    /// <param name="sortDir">Direção da ordenação ("asc" ou "desc").</param>
+    /// <returns>Coleção paginada de logs com links HATEOAS.</returns>
     [HttpGet("search")]
+    [ProducesResponseType(typeof(CollectionResource<GsDailyLogsDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Search(
         [FromQuery] long? idLog,
         [FromQuery] int? workHours,

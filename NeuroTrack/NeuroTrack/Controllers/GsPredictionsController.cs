@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using NeuroTrack.DTOs;
 using NeuroTrack.DTOs.Hypermedia;
 using NeuroTrack.Repositories;
@@ -71,7 +72,16 @@ public class GsPredictionsController : ControllerBase
     // =============================================================
     // GET ALL
     // =============================================================
+
+    /// <summary>
+    /// Retorna todas as previsões de estresse registradas.
+    /// </summary>
+    /// <remarks>
+    /// Endpoint não paginado. Retorna a coleção completa de previsões com links HATEOAS.
+    /// </remarks>
     [HttpGet]
+    [ProducesResponseType(typeof(CollectionResource<GsPredictionsDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAll()
     {
         try
@@ -113,7 +123,16 @@ public class GsPredictionsController : ControllerBase
     // =============================================================
     // GET BY ID
     // =============================================================
+
+    /// <summary>
+    /// Obtém uma previsão específica pelo ID.
+    /// </summary>
+    /// <param name="id">ID da previsão.</param>
+    /// <returns>Recurso de previsão com links HATEOAS.</returns>
     [HttpGet("{id}")]
+    [ProducesResponseType(typeof(Resource<GsPredictionsDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetById(long id)
     {
         try
@@ -146,7 +165,16 @@ public class GsPredictionsController : ControllerBase
     // =============================================================
     // POST CREATE
     // =============================================================
+
+    /// <summary>
+    /// Adiciona uma nova previsão de estresse.
+    /// </summary>
+    /// <param name="dto">Dados da previsão a ser criada.</param>
+    /// <returns>Recurso criado com links HATEOAS.</returns>
     [HttpPost]
+    [ProducesResponseType(typeof(Resource<GsPredictionsDTO>), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Add([FromBody] GsPredictionsDTO dto)
     {
         if (dto == null)
@@ -166,7 +194,17 @@ public class GsPredictionsController : ControllerBase
     // =============================================================
     // PUT UPDATE
     // =============================================================
+
+    /// <summary>
+    /// Atualiza uma previsão existente.
+    /// </summary>
+    /// <param name="dto">Dados atualizados da previsão.</param>
+    /// <returns>Mensagem de sucesso e links HATEOAS.</returns>
     [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Update([FromBody] GsPredictionsDTO dto)
     {
         try
@@ -197,7 +235,16 @@ public class GsPredictionsController : ControllerBase
     // =============================================================
     // DELETE
     // =============================================================
+
+    /// <summary>
+    /// Deleta uma previsão pelo ID.
+    /// </summary>
+    /// <param name="id">ID da previsão a ser deletada.</param>
+    /// <returns>Mensagem de confirmação e links para ações relacionadas.</returns>
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Delete(long id)
     {
         try
@@ -233,7 +280,24 @@ public class GsPredictionsController : ControllerBase
     // =============================================================
     // SEARCH
     // =============================================================
+
+    /// <summary>
+    /// Busca previsões com filtros, paginação e ordenação.
+    /// </summary>
+    /// <param name="idPrediction">ID da previsão para filtro opcional.</param>
+    /// <param name="datePredicted">Data da previsão para filtro opcional.</param>
+    /// <param name="idUser">ID do usuário para filtro opcional.</param>
+    /// <param name="idScores">ID do score associado para filtro opcional.</param>
+    /// <param name="idStatusRisk">ID do status de risco para filtro opcional.</param>
+    /// <param name="page">Número da página (padrão 1).</param>
+    /// <param name="pageSize">Tamanho da página (padrão 10).</param>
+    /// <param name="sortBy">Campo de ordenação (padrão "idPrediction").</param>
+    /// <param name="sortDir">Direção da ordenação ("asc" ou "desc").</param>
+    /// <returns>Coleção paginada de previsões com links HATEOAS.</returns>
     [HttpGet("search")]
+    [ProducesResponseType(typeof(CollectionResource<GsPredictionsDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Search(
         [FromQuery] long? idPrediction,
         [FromQuery] DateTime? datePredicted,

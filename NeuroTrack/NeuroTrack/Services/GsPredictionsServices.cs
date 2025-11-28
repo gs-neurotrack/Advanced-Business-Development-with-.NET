@@ -18,11 +18,9 @@ public class GsPredictionsServices : IGsPredictionsServices
         _gsPredictionsRepository = gsPredictionsRepository;
         _context = context;
     }
-    
-    public class NotFoundException : Exception
-    {
-        public NotFoundException(string message) : base(message) {}
-    }
+
+    // ❌ REMOVIDO: inner NotFoundException
+    // public class NotFoundException : Exception { ... }
 
     public async Task<GsPredictionsDTO?> GetByIdAsync(long id)
     {
@@ -30,7 +28,8 @@ public class GsPredictionsServices : IGsPredictionsServices
 
         if (prediction == null)
         {
-            throw new NotFoundException($"Prediction with ID {id} not found.");
+            // Usa a mesma exceção que o controller captura
+            throw new GsPredictionsRepository.NotFoundException($"Prediction with ID {id} not found.");
         }
 
         return new GsPredictionsDTO(
@@ -61,7 +60,8 @@ public class GsPredictionsServices : IGsPredictionsServices
 
     public async Task<GsPredictionsDTO> AddAsync(GsPredictionsDTO gsPredictionsDto)
     {
-        if (gsPredictionsDto == null) throw new ArgumentNullException(nameof(gsPredictionsDto), "Prediction Object can't be null.");
+        if (gsPredictionsDto == null)
+            throw new ArgumentNullException(nameof(gsPredictionsDto), "Prediction Object can't be null.");
 
         var prediction = new GsPredictions
         {
@@ -89,40 +89,34 @@ public class GsPredictionsServices : IGsPredictionsServices
 
     public async Task UpdateAsync(GsPredictionsDTO gsPredictionsDto)
     {
-        if (gsPredictionsDto == null) throw new ArgumentNullException(nameof(gsPredictionsDto), "Prediction Object can't be null.");
+        if (gsPredictionsDto == null)
+            throw new ArgumentNullException(nameof(gsPredictionsDto), "Prediction Object can't be null.");
 
         var existingPrediction = await _gsPredictionsRepository.GetByIdAsync(gsPredictionsDto.IdPrediction);
 
         if (existingPrediction == null)
         {
-            throw new NotFoundException($"Prediction with id {gsPredictionsDto.IdPrediction} not founded.");
+            // Mesma exceção do repositório
+            throw new GsPredictionsRepository.NotFoundException(
+                $"Prediction with id {gsPredictionsDto.IdPrediction} not found."
+            );
         }
 
-        existingPrediction.IdPrediction = gsPredictionsDto.IdPrediction;
+        existingPrediction.IdPrediction   = gsPredictionsDto.IdPrediction;
         existingPrediction.StressPredicted = gsPredictionsDto.StressPredicted;
-        existingPrediction.Message = gsPredictionsDto.Message;
-        existingPrediction.DatePredicted = gsPredictionsDto.DatePredicted;
-        existingPrediction.IdUser = gsPredictionsDto.IdUser;
-        existingPrediction.IdScores = gsPredictionsDto.IdScores;
-        existingPrediction.IdStatusRisk = gsPredictionsDto.IdStatusRisk;
+        existingPrediction.Message         = gsPredictionsDto.Message;
+        existingPrediction.DatePredicted   = gsPredictionsDto.DatePredicted;
+        existingPrediction.IdUser          = gsPredictionsDto.IdUser;
+        existingPrediction.IdScores        = gsPredictionsDto.IdScores;
+        existingPrediction.IdStatusRisk    = gsPredictionsDto.IdStatusRisk;
 
         await _gsPredictionsRepository.UpdateAsync(existingPrediction);
     }
 
     public async Task DeleteAsync(long id)
     {
-        try
-        {
-            await _gsPredictionsRepository.DeleteAsync(id);
-        }
-        catch (GsPredictionsRepository.NotFoundException ex)
-        {
-            throw new GsPredictionsRepository.NotFoundException($"Prediction with id {id} not founded.");
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"Error when trying to delete the prediction with id {id}: {ex.Message}");
-        }
+        // Deixa a NotFoundException do repositório subir direto pro controller
+        await _gsPredictionsRepository.DeleteAsync(id);
     }
 
     public async Task<PagedResult<GsPredictionsDTO>> SearchAsync(
@@ -142,7 +136,9 @@ public class GsPredictionsServices : IGsPredictionsServices
         sortBy ??= "idPrediction";
         sortDir ??= "asc";
 
-        var (items, total) = await _gsPredictionsRepository.SearchAsync(IdPrediction, DatePredicted, IdUser, IdScores, IdStatusRisk, page, pageSize, sortBy, sortDir);
+        var (items, total) = await _gsPredictionsRepository.SearchAsync(
+            IdPrediction, DatePredicted, IdUser, IdScores, IdStatusRisk, page, pageSize, sortBy, sortDir
+        );
 
         var dtoItems = items.Select(prediction => new GsPredictionsDTO(
             IdPrediction: prediction.IdPrediction,

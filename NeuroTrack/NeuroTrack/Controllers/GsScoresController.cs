@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using NeuroTrack.DTOs;
 using NeuroTrack.DTOs.Hypermedia;
 using NeuroTrack.Services.Interfaces;
@@ -71,7 +72,16 @@ public class GsScoresController : ControllerBase
     // =============================================================
     // GET ALL
     // =============================================================
+
+    /// <summary>
+    /// Retorna todos os scores de estresse registrados.
+    /// </summary>
+    /// <remarks>
+    /// Endpoint não paginado. Retorna a coleção completa de scores com links HATEOAS.
+    /// </remarks>
     [HttpGet]
+    [ProducesResponseType(typeof(CollectionResource<GsScoresDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAll()
     {
         try
@@ -113,7 +123,16 @@ public class GsScoresController : ControllerBase
     // =============================================================
     // GET BY ID
     // =============================================================
+
+    /// <summary>
+    /// Obtém um score específico pelo ID.
+    /// </summary>
+    /// <param name="id">ID do score.</param>
+    /// <returns>Recurso de score com links HATEOAS.</returns>
     [HttpGet("{id}")]
+    [ProducesResponseType(typeof(Resource<GsScoresDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetById(long id)
     {
         try
@@ -146,7 +165,16 @@ public class GsScoresController : ControllerBase
     // =============================================================
     // POST CREATE
     // =============================================================
+
+    /// <summary>
+    /// Adiciona um novo score de estresse.
+    /// </summary>
+    /// <param name="dto">Dados do score a ser criado.</param>
+    /// <returns>Recurso criado com links HATEOAS.</returns>
     [HttpPost]
+    [ProducesResponseType(typeof(Resource<GsScoresDTO>), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Add([FromBody] GsScoresDTO dto)
     {
         if (dto == null)
@@ -166,7 +194,17 @@ public class GsScoresController : ControllerBase
     // =============================================================
     // PUT UPDATE
     // =============================================================
+
+    /// <summary>
+    /// Atualiza um score existente.
+    /// </summary>
+    /// <param name="dto">Dados atualizados do score.</param>
+    /// <returns>Mensagem de sucesso e links HATEOAS.</returns>
     [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Update([FromBody] GsScoresDTO dto)
     {
         try
@@ -197,7 +235,16 @@ public class GsScoresController : ControllerBase
     // =============================================================
     // DELETE
     // =============================================================
+
+    /// <summary>
+    /// Deleta um score pelo ID.
+    /// </summary>
+    /// <param name="id">ID do score a ser deletado.</param>
+    /// <returns>Mensagem de confirmação e links para ações relacionadas.</returns>
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Delete(long id)
     {
         try
@@ -233,7 +280,24 @@ public class GsScoresController : ControllerBase
     // =============================================================
     // SEARCH
     // =============================================================
+
+    /// <summary>
+    /// Busca scores com filtros, paginação e ordenação.
+    /// </summary>
+    /// <param name="idScores">ID do score para filtro opcional.</param>
+    /// <param name="dateScore">Data do score para filtro opcional.</param>
+    /// <param name="createdAt">Data de criação para filtro opcional.</param>
+    /// <param name="idStatusRisk">ID do status de risco para filtro opcional.</param>
+    /// <param name="idUser">ID do usuário para filtro opcional.</param>
+    /// <param name="page">Número da página (padrão 1).</param>
+    /// <param name="pageSize">Tamanho da página (padrão 10).</param>
+    /// <param name="sortBy">Campo de ordenação (padrão "idScores").</param>
+    /// <param name="sortDir">Direção da ordenação ("asc" ou "desc").</param>
+    /// <returns>Coleção paginada de scores com links HATEOAS.</returns>
     [HttpGet("search")]
+    [ProducesResponseType(typeof(CollectionResource<GsScoresDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Search(
         [FromQuery] long? idScores,
         [FromQuery] DateTime? dateScore,

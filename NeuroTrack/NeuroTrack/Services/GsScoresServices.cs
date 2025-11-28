@@ -18,11 +18,9 @@ public class GsScoresServices : IGsScoresServices
         _gsScoresRepository = gsScoresRepository;
         _context = context;
     }
-    
-    public class NotFoundException : Exception
-    {
-        public NotFoundException(string message) : base(message) {}
-    }
+
+    // ❌ REMOVIDO: inner NotFoundException
+    // public class NotFoundException : Exception { ... }
 
     public async Task<GsScoresDTO?> GetByIdAsync(long id)
     {
@@ -30,7 +28,8 @@ public class GsScoresServices : IGsScoresServices
 
         if (score == null)
         {
-            throw new NotFoundException($"Score with id {id} not found.");
+            // Usa a mesma exceção que o controller captura
+            throw new GsScoresRepository.NotFoundException($"Score with id {id} not found.");
         }
 
         return new GsScoresDTO(
@@ -63,7 +62,8 @@ public class GsScoresServices : IGsScoresServices
 
     public async Task<GsScoresDTO> AddAsync(GsScoresDTO gsScoresDto)
     {
-        if (gsScoresDto == null) throw new ArgumentNullException(nameof(gsScoresDto), "Score Object can't be null.");
+        if (gsScoresDto == null)
+            throw new ArgumentNullException(nameof(gsScoresDto), "Score Object can't be null.");
 
         var score = new GsScores
         {
@@ -93,22 +93,26 @@ public class GsScoresServices : IGsScoresServices
 
     public async Task UpdateAsync(GsScoresDTO gsScoresDto)
     {
-        if (gsScoresDto == null) throw new ArgumentNullException(nameof(gsScoresDto), "Score Object can't be null.");
+        if (gsScoresDto == null)
+            throw new ArgumentNullException(nameof(gsScoresDto), "Score Object can't be null.");
 
         var existingScore = await _gsScoresRepository.GetByIdAsync(gsScoresDto.IdScores);
         
         if (existingScore == null)
         {
-            throw new NotFoundException($"Score With Id {gsScoresDto.IdScores} Not Founded.");
+            // Mesma exceção do repositório
+            throw new GsScoresRepository.NotFoundException(
+                $"Score with Id {gsScoresDto.IdScores} not found."
+            );
         }
 
-        existingScore.IdScores = gsScoresDto.IdScores;
-        existingScore.CreatedAt = gsScoresDto.CreatedAt;
-        existingScore.DateScore = gsScoresDto.DateScore;
-        existingScore.IdLog = gsScoresDto.IdLog;
-        existingScore.IdStatusRisk = gsScoresDto.IdStatusRisk;
-        existingScore.IdUser = gsScoresDto.IdUser;
-        existingScore.ScoreValue = gsScoresDto.ScoreValue;
+        existingScore.IdScores          = gsScoresDto.IdScores;
+        existingScore.CreatedAt         = gsScoresDto.CreatedAt;
+        existingScore.DateScore         = gsScoresDto.DateScore;
+        existingScore.IdLog             = gsScoresDto.IdLog;
+        existingScore.IdStatusRisk      = gsScoresDto.IdStatusRisk;
+        existingScore.IdUser            = gsScoresDto.IdUser;
+        existingScore.ScoreValue        = gsScoresDto.ScoreValue;
         existingScore.TimeRecommendation = gsScoresDto.TimeRecommendation;
 
         await _gsScoresRepository.UpdateAsync(existingScore);
@@ -116,18 +120,8 @@ public class GsScoresServices : IGsScoresServices
 
     public async Task DeleteAsync(long id)
     {
-        try
-        {
-            await _gsScoresRepository.DeleteAsync(id);
-        }
-        catch (GsScoresRepository.NotFoundException ex)
-        {
-            throw new GsScoresRepository.NotFoundException($"Score with Id {id} not founded.");
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"Error when trying to delete the log with Id {id}: {ex.Message}");
-        }
+        // Deixa a NotFoundException do repositório subir direto pro controller
+        await _gsScoresRepository.DeleteAsync(id);
     }
 
     public async Task<PagedResult<GsScoresDTO>> SearchAsync(
@@ -175,6 +169,5 @@ public class GsScoresServices : IGsScoresServices
                 TotalPages = totalPages
             }
         };
-        
     }
 }
