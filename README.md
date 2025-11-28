@@ -76,37 +76,61 @@ O NeuroTrack será uma solução Full-stack, utilizando Oracle Database para o a
 ---
 # 🧠 **Daily Logs — `/api/GsDailyLogs`**
 
-| Método | Endpoint | Descrição | Corpo da Requisição (JSON) | Resposta Esperada |
-|--------|-----------|------------|-----------------------------|-------------------|
-| **GET** | `/api/GsDailyLogs` | Retorna todos os logs diários (com HATEOAS). | — | 200 OK com coleção + links. |
-| **GET** | `/api/GsDailyLogs/{id}` | Retorna um log específico. | — | 200 OK ou 404 Not Found. |
-| **POST** | `/api/GsDailyLogs` | Cria um novo registro de atividade diária. | `{ "workHours": 9, "meetings": 3, "idUser": 12 }` | 201 Created (objeto + links). |
-| **DELETE** | `/api/GsDailyLogs/{id}` | Remove um log existente. | — | 200 OK (mensagem + links). |
-| **GET** | `/api/GsDailyLogs/search` | Busca logs diários com filtros e paginação. | — | 200 OK com `PagedResult` + links. |
+> IDs (`idLog`) e datas (`logDate`) são gerados automaticamente na criação do registro.
+
+| Método  | Endpoint                    | Descrição                                      | Corpo da Requisição (JSON)                                     | Resposta Esperada                          |
+|---------|-----------------------------|------------------------------------------------|----------------------------------------------------------------|--------------------------------------------|
+| **GET** | `/api/GsDailyLogs`          | Retorna todos os logs diários (com HATEOAS).   | —                                                              | 200 OK com coleção + links.               |
+| **GET** | `/api/GsDailyLogs/{id}`     | Retorna um log específico.                     | —                                                              | 200 OK ou 404 Not Found.                  |
+| **POST**| `/api/GsDailyLogs`          | Cria um novo registro de atividade diária.     | `{ "workHours": 9, "meetings": 3, "idUser": 12 }`              | 201 Created (objeto + links).             |
+| **PUT** | `/api/GsDailyLogs`          | Atualiza um log existente.                     | `{ "idLog": 1, "workHours": 8, "meetings": 4, "idUser": 12 }`  | 200 OK ou 404 Not Found.                  |
+| **DELETE** | `/api/GsDailyLogs/{id}`  | Remove um log existente.                       | —                                                              | 200 OK (mensagem + links) ou 404 NotFound.|
+| **GET** | `/api/GsDailyLogs/search`   | Busca logs diários com filtros e paginação.    | —                                                              | 200 OK com `PagedResult` + links.         |
 
 ---
 
 # 🔐 **Limits — `/api/GsLimits`**
 
-| Método | Endpoint | Descrição | Body | Resposta |
-|--------|----------|-----------|-------|----------|
-| **GET** | `/api/GsLimits` | Retorna todos os limites configurados (horas e reuniões). | — | 200 OK |
-| **GET** | `/api/GsLimits/{id}` | Retorna limite específico. | — | 200 OK ou 404 |
-| **POST** | `/api/GsLimits` | Cria novos limites. | `{ "limitHours": 8, "limitMeetings": 5 }` | 201 Created |
-| **PUT** | `/api/GsLimits/{id}` | Atualiza limites existentes. | `{ "limitHours": 10, "limitMeetings": 6 }` | 204 No Content |
-| **GET** | `/api/GsLimits/search` | Busca limites com filtros e paginação. | — | 200 OK |
+> `idLimits` é identity no banco e `createdAt` é definido pelo servidor na criação.
+
+| Método  | Endpoint                 | Descrição                                       | Body (JSON)                                  | Resposta                        |
+|---------|--------------------------|-------------------------------------------------|----------------------------------------------|---------------------------------|
+| **GET** | `/api/GsLimits`         | Retorna todos os limites configurados.         | —                                            | 200 OK                          |
+| **GET** | `/api/GsLimits/{id}`    | Retorna limite específico.                     | —                                            | 200 OK ou 404                   |
+| **POST**| `/api/GsLimits`         | Cria novos limites de horas e reuniões.        | `{ "limitHours": 8, "limitMeetings": 5 }`    | 201 Created (objeto + links).   |
+| **PUT** | `/api/GsLimits`         | Atualiza limites existentes.                   | `{ "idLimits": 1, "limitHours": 10, "limitMeetings": 6 }` | 200 OK ou 404 Not Found. |
+| **DELETE** | `/api/GsLimits/{id}` | Remove um limite pelo ID.                      | —                                            | 200 OK ou 404                   |
+| **GET** | `/api/GsLimits/search`  | Busca limites com filtros e paginação.         | —                                            | 200 OK                          |
 
 ---
 
 # 📊 **Scores — `/api/GsScores`**
 
-| Método | Endpoint | Descrição | Body | Resposta |
-|--------|----------|-----------|-------|----------|
-| **GET** | `/api/GsScores` | Lista todos os scores registrados. | — | 200 OK |
-| **GET** | `/api/GsScores/{id}` | Retorna um score específico. | — | 200 OK ou 404 |
-| **POST** | `/api/GsScores` | Registra um novo score. | `{ "scoreValue": 72.5, "riskStatusId": 2, "idUser": 12 }` | 201 Created |
-| **DELETE** | `/api/GsScores/{id}` | Remove um score pelo ID. | — | 200 OK |
-| **GET** | `/api/GsScores/search` | Busca scores com filtros e ordenação. | — | 200 OK com paginação. |
+> `idScores`, `dateScore` e `createdAt` são gerados pelo back-end no momento do cálculo/gravação.
+
+| Método  | Endpoint                  | Descrição                                      | Body (JSON)                                                                 | Resposta                        |
+|---------|---------------------------|-----------------------------------------------|-------------------------------------------------------------------------------|---------------------------------|
+| **GET** | `/api/GsScores`          | Lista todos os scores registrados.           | —                                                                             | 200 OK                          |
+| **GET** | `/api/GsScores/{id}`     | Retorna um score específico.                 | —                                                                             | 200 OK ou 404                   |
+| **POST**| `/api/GsScores`          | Registra um novo score já calculado.         | `{ "scoreValue": 72.5, "timeRecommendation": 15, "idStatusRisk": 2, "idUser": 12, "idLog": 34 }` | 201 Created (objeto + links). |
+| **PUT** | `/api/GsScores`          | Atualiza um score existente.                 | `{ "idScores": 1, "scoreValue": 80.0, "timeRecommendation": 20, "idStatusRisk": 3, "idUser": 12, "idLog": 34 }` | 200 OK ou 404 Not Found. |
+| **DELETE** | `/api/GsScores/{id}`  | Remove um score pelo ID.                     | —                                                                             | 200 OK ou 404                   |
+| **GET** | `/api/GsScores/search`   | Busca scores com filtros e ordenação.        | —                                                                             | 200 OK com paginação.           |
+
+---
+
+# 🔮 **Predictions — `/api/GsPredictions`**
+
+> `idPrediction` e `datePredicted` são criados automaticamente pelo back-end quando a previsão é gerada.
+
+| Método  | Endpoint                       | Descrição                                             | Body (JSON)                                                                 | Resposta                        |
+|---------|--------------------------------|--------------------------------------------------------|-------------------------------------------------------------------------------|---------------------------------|
+| **GET** | `/api/GsPredictions`          | Lista todas as previsões de estresse.                 | —                                                                             | 200 OK                          |
+| **GET** | `/api/GsPredictions/{id}`     | Retorna uma previsão específica.                      | —                                                                             | 200 OK ou 404                   |
+| **POST**| `/api/GsPredictions`          | Registra uma nova previsão de estresse.               | `{ "stressPredicted": 0.82, "message": "Risco alto de estresse", "idUser": 12, "idScores": 5, "idStatusRisk": 3 }` | 201 Created (objeto + links). |
+| **PUT** | `/api/GsPredictions`          | Atualiza uma previsão existente.                      | `{ "idPrediction": 1, "stressPredicted": 0.75, "message": "Risco moderado", "idUser": 12, "idScores": 5, "idStatusRisk": 2 }` | 200 OK ou 404 Not Found. |
+| **DELETE** | `/api/GsPredictions/{id}`  | Remove uma previsão pelo ID.                          | —                                                                             | 200 OK ou 404                   |
+| **GET** | `/api/GsPredictions/search`   | Busca previsões com filtros e paginação.              | —                                                                             | 200 OK com paginação.           |
 
 ---
 
@@ -114,11 +138,11 @@ O NeuroTrack será uma solução Full-stack, utilizando Oracle Database para o a
 
 ## 🧠 Daily Logs — `/api/GsDailyLogs/search`
 
-**Parâmetros suportados:**
+**Parâmetros suportados (query string):**
 
-- `IdLog` *(long, opcional)*  
-- `WorkHours` *(int, opcional)*  
-- `IdUser` *(long, opcional)*  
+- `idLog` *(long, opcional)*  
+- `workHours` *(int, opcional)*  
+- `idUser` *(long, opcional)*  
 - `page` *(int)*  
 - `pageSize` *(int)*  
 - `sortBy` *(idLog, workHours, idUser)*  
@@ -126,7 +150,7 @@ O NeuroTrack será uma solução Full-stack, utilizando Oracle Database para o a
 
 **Exemplo**
 
-    GET /api/GsDailyLogs/search?IdUser=12&page=1&pageSize=5&sortBy=idLog&sortDir=asc
+    GET /api/GsDailyLogs/search?idUser=12&page=1&pageSize=5&sortBy=idLog&sortDir=asc
 
 ---
 
@@ -134,30 +158,49 @@ O NeuroTrack será uma solução Full-stack, utilizando Oracle Database para o a
 
 **Parâmetros suportados:**
 
-- `IdUser`
-- `RiskStatusId`
-- `page`, `pageSize`
-- `sortBy`
-- `sortDir`
+- `idScores` *(long, opcional)*  
+- `dateScore` *(date, opcional)*  
+- `createdAt` *(date, opcional)*  
+- `idStatusRisk` *(long, opcional)*  
+- `idUser` *(long, opcional)*  
+- `page`, `pageSize`, `sortBy`, `sortDir`
 
 **Exemplo**
 
-    GET /api/GsScores/search?IdUser=12&page=1&pageSize=10
+    GET /api/GsScores/search?idUser=12&page=1&pageSize=10
 
 ---
 
 ## 🔐 Limits — `/api/GsLimits/search`
 
 **Parâmetros suportados:**
-- `limitHours`
-- `limitMeetings`
-- Paginação (`page`, `pageSize`)
+
+- `idLimits` *(long, opcional)*  
+- `limitHours` *(int, opcional)*  
+- `limitMeetings` *(int, opcional)*  
+- `createdAt` *(date, opcional)*  
+- `page`, `pageSize`, `sortBy`, `sortDir`
 
 **Exemplo**
 
     GET /api/GsLimits/search?limitHours=8&page=1&pageSize=5
 
 ---
+
+## 🔮 Predictions — `/api/GsPredictions/search`
+
+**Parâmetros suportados:**
+
+- `idPrediction` *(long, opcional)*  
+- `datePredicted` *(date, opcional)*  
+- `idUser` *(long, opcional)*  
+- `idScores` *(long, opcional)*  
+- `idStatusRisk` *(long, opcional)*  
+- `page`, `pageSize`, `sortBy`, `sortDir`
+
+**Exemplo**
+
+    GET /api/GsPredictions/search?idUser=12&page=1&pageSize=10
 
 # 🧩 **HATEOAS — Exemplo de Resposta Completa**
 
