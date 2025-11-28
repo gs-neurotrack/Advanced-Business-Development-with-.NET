@@ -69,7 +69,7 @@ Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
 - **Compatibilidade entre Plataformas**
 - **Usabilidade e Responsividade**
 
----
+--- 
 
 # 📡 API MedSave — Endpoints e Exemplos
 > Por padrão, a API roda em **http://localhost:5162**
