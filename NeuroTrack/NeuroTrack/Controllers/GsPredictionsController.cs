@@ -78,6 +78,10 @@ public class GsPredictionsController : ControllerBase
     /// </summary>
     /// <remarks>
     /// Endpoint não paginado. Retorna a coleção completa de previsões com links HATEOAS.
+    ///
+    /// Status possíveis:
+    /// - 200 OK: coleção retornada com sucesso
+    /// - 500 Internal Server Error: erro inesperado ao buscar os dados
     /// </remarks>
     [HttpGet]
     [ProducesResponseType(typeof(CollectionResource<GsPredictionsDTO>), StatusCodes.Status200OK)]
@@ -128,6 +132,12 @@ public class GsPredictionsController : ControllerBase
     /// Obtém uma previsão específica pelo ID.
     /// </summary>
     /// <param name="id">ID da previsão.</param>
+    /// <remarks>
+    /// Status possíveis:
+    /// - 200 OK: previsão encontrada e retornada
+    /// - 404 Not Found: nenhuma previsão com o ID informado foi encontrada
+    /// - 500 Internal Server Error: erro inesperado no servidor
+    /// </remarks>
     /// <returns>Recurso de previsão com links HATEOAS.</returns>
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(Resource<GsPredictionsDTO>), StatusCodes.Status200OK)]
@@ -170,6 +180,27 @@ public class GsPredictionsController : ControllerBase
     /// Adiciona uma nova previsão de estresse.
     /// </summary>
     /// <param name="dto">Dados da previsão a ser criada.</param>
+    /// <remarks>
+    /// Campos gerados automaticamente:
+    /// - <c>idPrediction</c>: gerado pelo banco (IDENTITY).
+    /// - <c>datePredicted</c>: normalmente definido pela aplicação no momento da geração da previsão.
+    ///
+    /// O cliente precisa enviar apenas os campos de negócio:
+    /// <code>
+    /// {
+    ///   "stressPredicted": 0.82,
+    ///   "message": "Risco alto de estresse nas próximas horas.",
+    ///   "idUser": 12,
+    ///   "idScores": 34,
+    ///   "idStatusRisk": 3
+    /// }
+    /// </code>
+    ///
+    /// Status possíveis:
+    /// - 201 Created: previsão criada com sucesso
+    /// - 400 Bad Request: payload inválido ou inconsistências de validação
+    /// - 500 Internal Server Error: erro inesperado ao criar o registro
+    /// </remarks>
     /// <returns>Recurso criado com links HATEOAS.</returns>
     [HttpPost]
     [ProducesResponseType(typeof(Resource<GsPredictionsDTO>), StatusCodes.Status201Created)]
@@ -198,7 +229,29 @@ public class GsPredictionsController : ControllerBase
     /// <summary>
     /// Atualiza uma previsão existente.
     /// </summary>
-    /// <param name="dto">Dados atualizados da previsão.</param>
+    /// <param name="dto">
+    /// Dados atualizados da previsão. O campo <c>idPrediction</c> deve conter o ID do registro a ser atualizado.
+    /// </param>
+    /// <remarks>
+    /// Exemplo de corpo (JSON):
+    /// <code>
+    /// {
+    ///   "idPrediction": 5,
+    ///   "stressPredicted": 0.75,
+    ///   "message": "Risco moderado de estresse.",
+    ///   "datePredicted": "2025-11-28T10:00:00Z",
+    ///   "idUser": 12,
+    ///   "idScores": 34,
+    ///   "idStatusRisk": 2
+    /// }
+    /// </code>
+    ///
+    /// Status possíveis:
+    /// - 200 OK: previsão atualizada com sucesso
+    /// - 400 Bad Request: payload inválido
+    /// - 404 Not Found: previsão com o ID informado não existe
+    /// - 500 Internal Server Error: erro inesperado ao atualizar o registro
+    /// </remarks>
     /// <returns>Mensagem de sucesso e links HATEOAS.</returns>
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -240,6 +293,12 @@ public class GsPredictionsController : ControllerBase
     /// Deleta uma previsão pelo ID.
     /// </summary>
     /// <param name="id">ID da previsão a ser deletada.</param>
+    /// <remarks>
+    /// Status possíveis:
+    /// - 200 OK: previsão deletada com sucesso
+    /// - 404 Not Found: previsão com o ID informado não existe
+    /// - 500 Internal Server Error: erro inesperado ao excluir o registro
+    /// </remarks>
     /// <returns>Mensagem de confirmação e links para ações relacionadas.</returns>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -284,15 +343,26 @@ public class GsPredictionsController : ControllerBase
     /// <summary>
     /// Busca previsões com filtros, paginação e ordenação.
     /// </summary>
-    /// <param name="idPrediction">ID da previsão para filtro opcional.</param>
+    /// <param name="idPrediction">ID exato da previsão para filtro opcional.</param>
     /// <param name="datePredicted">Data da previsão para filtro opcional.</param>
     /// <param name="idUser">ID do usuário para filtro opcional.</param>
     /// <param name="idScores">ID do score associado para filtro opcional.</param>
     /// <param name="idStatusRisk">ID do status de risco para filtro opcional.</param>
-    /// <param name="page">Número da página (padrão 1).</param>
-    /// <param name="pageSize">Tamanho da página (padrão 10).</param>
+    /// <param name="page">Número da página (padrão 1, mínimo 1).</param>
+    /// <param name="pageSize">Tamanho da página (padrão 10, máximo 100).</param>
     /// <param name="sortBy">Campo de ordenação (padrão "idPrediction").</param>
-    /// <param name="sortDir">Direção da ordenação ("asc" ou "desc").</param>
+    /// <param name="sortDir">Direção da ordenação: <c>asc</c> ou <c>desc</c>.</param>
+    /// <remarks>
+    /// Exemplo de chamada:
+    /// <code>
+    /// GET /api/GsPredictions/search?idUser=12&amp;page=1&amp;pageSize=5&amp;sortBy=datePredicted&amp;sortDir=desc
+    /// </code>
+    ///
+    /// Status possíveis:
+    /// - 200 OK: resultados retornados com sucesso (podem estar vazios)
+    /// - 400 Bad Request: parâmetros de paginação/ordenação inválidos
+    /// - 500 Internal Server Error: erro inesperado ao realizar a busca
+    /// </remarks>
     /// <returns>Coleção paginada de previsões com links HATEOAS.</returns>
     [HttpGet("search")]
     [ProducesResponseType(typeof(CollectionResource<GsPredictionsDTO>), StatusCodes.Status200OK)]

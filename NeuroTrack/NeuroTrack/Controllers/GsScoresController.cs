@@ -78,6 +78,10 @@ public class GsScoresController : ControllerBase
     /// </summary>
     /// <remarks>
     /// Endpoint não paginado. Retorna a coleção completa de scores com links HATEOAS.
+    ///
+    /// Status possíveis:
+    /// - 200 OK: coleção retornada com sucesso.
+    /// - 500 Internal Server Error: erro inesperado ao buscar os dados.
     /// </remarks>
     [HttpGet]
     [ProducesResponseType(typeof(CollectionResource<GsScoresDTO>), StatusCodes.Status200OK)]
@@ -128,6 +132,12 @@ public class GsScoresController : ControllerBase
     /// Obtém um score específico pelo ID.
     /// </summary>
     /// <param name="id">ID do score.</param>
+    /// <remarks>
+    /// Status possíveis:
+    /// - 200 OK: score encontrado e retornado.
+    /// - 404 Not Found: nenhum score com o ID informado foi encontrado.
+    /// - 500 Internal Server Error: erro inesperado no servidor.
+    /// </remarks>
     /// <returns>Recurso de score com links HATEOAS.</returns>
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(Resource<GsScoresDTO>), StatusCodes.Status200OK)]
@@ -170,6 +180,28 @@ public class GsScoresController : ControllerBase
     /// Adiciona um novo score de estresse.
     /// </summary>
     /// <param name="dto">Dados do score a ser criado.</param>
+    /// <remarks>
+    /// Campos gerados automaticamente pelo sistema/banco:
+    /// - <c>idScores</c>: gerado automaticamente pela tabela (IDENTITY).
+    /// - <c>dateScore</c>: normalmente preenchido pela aplicação no momento do cálculo do score.
+    /// - <c>createdAt</c>: data de criação do registro.
+    ///
+    /// No uso típico, o cliente (frontend ou outro serviço) deve enviar apenas os campos de negócio:
+    /// <code>
+    /// {
+    ///   "scoreValue": 0.82,
+    ///   "timeRecommendation": 15,
+    ///   "idStatusRisk": 2,
+    ///   "idUser": 12,
+    ///   "idLog": 40
+    /// }
+    /// </code>
+    ///
+    /// Status possíveis:
+    /// - 201 Created: score criado com sucesso.
+    /// - 400 Bad Request: payload inválido ou dados inconsistentes.
+    /// - 500 Internal Server Error: erro inesperado ao criar o registro.
+    /// </remarks>
     /// <returns>Recurso criado com links HATEOAS.</returns>
     [HttpPost]
     [ProducesResponseType(typeof(Resource<GsScoresDTO>), StatusCodes.Status201Created)]
@@ -198,7 +230,30 @@ public class GsScoresController : ControllerBase
     /// <summary>
     /// Atualiza um score existente.
     /// </summary>
-    /// <param name="dto">Dados atualizados do score.</param>
+    /// <param name="dto">
+    /// Dados atualizados do score. O campo <c>idScores</c> deve conter o ID do registro que será atualizado.
+    /// </param>
+    /// <remarks>
+    /// Exemplo de corpo (JSON) para atualização:
+    /// <code>
+    /// {
+    ///   "idScores": 5,
+    ///   "dateScore": "2025-11-28T10:00:00Z",
+    ///   "scoreValue": 0.76,
+    ///   "timeRecommendation": 20,
+    ///   "createdAt": "2025-11-28T10:05:00Z",
+    ///   "idStatusRisk": 3,
+    ///   "idUser": 12,
+    ///   "idLog": 40
+    /// }
+    /// </code>
+    ///
+    /// Status possíveis:
+    /// - 200 OK: score atualizado com sucesso.
+    /// - 400 Bad Request: payload inválido.
+    /// - 404 Not Found: score com o ID informado não existe.
+    /// - 500 Internal Server Error: erro inesperado ao atualizar o registro.
+    /// </remarks>
     /// <returns>Mensagem de sucesso e links HATEOAS.</returns>
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -240,6 +295,12 @@ public class GsScoresController : ControllerBase
     /// Deleta um score pelo ID.
     /// </summary>
     /// <param name="id">ID do score a ser deletado.</param>
+    /// <remarks>
+    /// Status possíveis:
+    /// - 200 OK: score deletado com sucesso.
+    /// - 404 Not Found: score com o ID informado não existe.
+    /// - 500 Internal Server Error: erro inesperado ao excluir o registro.
+    /// </remarks>
     /// <returns>Mensagem de confirmação e links para ações relacionadas.</returns>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -284,15 +345,26 @@ public class GsScoresController : ControllerBase
     /// <summary>
     /// Busca scores com filtros, paginação e ordenação.
     /// </summary>
-    /// <param name="idScores">ID do score para filtro opcional.</param>
-    /// <param name="dateScore">Data do score para filtro opcional.</param>
-    /// <param name="createdAt">Data de criação para filtro opcional.</param>
-    /// <param name="idStatusRisk">ID do status de risco para filtro opcional.</param>
-    /// <param name="idUser">ID do usuário para filtro opcional.</param>
-    /// <param name="page">Número da página (padrão 1).</param>
-    /// <param name="pageSize">Tamanho da página (padrão 10).</param>
+    /// <param name="idScores">ID exato do score para filtro opcional.</param>
+    /// <param name="dateScore">Data em que o score foi calculado para filtro opcional.</param>
+    /// <param name="createdAt">Data de criação do registro para filtro opcional.</param>
+    /// <param name="idStatusRisk">ID do status de risco associado ao score para filtro opcional.</param>
+    /// <param name="idUser">ID do usuário associado ao score para filtro opcional.</param>
+    /// <param name="page">Número da página (padrão 1, mínimo 1).</param>
+    /// <param name="pageSize">Tamanho da página (padrão 10, máximo 100).</param>
     /// <param name="sortBy">Campo de ordenação (padrão "idScores").</param>
-    /// <param name="sortDir">Direção da ordenação ("asc" ou "desc").</param>
+    /// <param name="sortDir">Direção da ordenação: <c>asc</c> ou <c>desc</c>.</param>
+    /// <remarks>
+    /// Exemplo de chamada:
+    /// <code>
+    /// GET /api/GsScores/search?idUser=12&amp;page=1&amp;pageSize=5&amp;sortBy=dateScore&amp;sortDir=desc
+    /// </code>
+    ///
+    /// Status possíveis:
+    /// - 200 OK: resultados retornados com sucesso (podem estar vazios).
+    /// - 400 Bad Request: parâmetros de paginação/ordenação inválidos.
+    /// - 500 Internal Server Error: erro inesperado ao realizar a busca.
+    /// </remarks>
     /// <returns>Coleção paginada de scores com links HATEOAS.</returns>
     [HttpGet("search")]
     [ProducesResponseType(typeof(CollectionResource<GsScoresDTO>), StatusCodes.Status200OK)]

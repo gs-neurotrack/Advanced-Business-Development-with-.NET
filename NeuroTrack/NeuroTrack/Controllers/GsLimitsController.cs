@@ -78,6 +78,10 @@ public class GsLimitsController : ControllerBase
     /// </summary>
     /// <remarks>
     /// Endpoint não paginado. Retorna a coleção completa de limites (horas e reuniões) com links HATEOAS.
+    ///
+    /// Status possíveis:
+    /// - 200 OK: coleção retornada com sucesso
+    /// - 500 Internal Server Error: erro inesperado ao buscar os dados
     /// </remarks>
     [HttpGet]
     [ProducesResponseType(typeof(CollectionResource<GsLimitsDTO>), StatusCodes.Status200OK)]
@@ -128,6 +132,12 @@ public class GsLimitsController : ControllerBase
     /// Obtém um limite específico pelo ID.
     /// </summary>
     /// <param name="id">ID do limite.</param>
+    /// <remarks>
+    /// Status possíveis:
+    /// - 200 OK: limite encontrado e retornado
+    /// - 404 Not Found: nenhum limite com o ID informado foi encontrado
+    /// - 500 Internal Server Error: erro inesperado no servidor
+    /// </remarks>
     /// <returns>Recurso de limite com links HATEOAS.</returns>
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(Resource<GsLimitsDTO>), StatusCodes.Status200OK)]
@@ -170,6 +180,24 @@ public class GsLimitsController : ControllerBase
     /// Adiciona um novo limite de horas e reuniões.
     /// </summary>
     /// <param name="dto">Dados do limite a ser criado.</param>
+    /// <remarks>
+    /// Campos gerados automaticamente:
+    /// - <c>idLimits</c>: gerado pelo banco (IDENTITY).
+    /// - <c>createdAt</c>: registrado automaticamente com a data/hora de criação (regra de aplicação/banco).
+    ///
+    /// O cliente precisa informar apenas:
+    /// <code>
+    /// {
+    ///   "limitHours": 8,
+    ///   "limitMeetings": 5
+    /// }
+    /// </code>
+    ///
+    /// Status possíveis:
+    /// - 201 Created: limite criado com sucesso
+    /// - 400 Bad Request: payload inválido ou inconsistências de validação
+    /// - 500 Internal Server Error: erro inesperado ao criar o registro
+    /// </remarks>
     /// <returns>Recurso criado com links HATEOAS.</returns>
     [HttpPost]
     [ProducesResponseType(typeof(Resource<GsLimitsDTO>), StatusCodes.Status201Created)]
@@ -198,8 +226,29 @@ public class GsLimitsController : ControllerBase
     /// <summary>
     /// Atualiza um limite existente.
     /// </summary>
-    /// <param name="dto">Dados atualizados do limite.</param>
-    /// <returns>Mensagem de sucesso e links HATEOAS.</returns>
+    /// <param name="dto">
+    /// Dados atualizados do limite. O campo <c>idLimits</c> deve conter o ID do registro a ser atualizado.
+    /// </param>
+    /// <remarks>
+    /// Exemplo de corpo (JSON):
+    /// <code>
+    /// {
+    ///   "idLimits": 3,
+    ///   "limitHours": 10,
+    ///   "limitMeetings": 6,
+    ///   "createdAt": "2025-11-28T10:00:00Z"
+    /// }
+    /// </code>
+    ///
+    /// Observação: <c>createdAt</c> normalmente é controlado pela aplicação/banco; o envio desse campo
+    /// pode ser opcional dependendo da sua regra de negócio.
+    ///
+    /// Status possíveis:
+    /// - 200 OK: limite atualizado com sucesso
+    /// - 400 Bad Request: payload inválido
+    /// - 404 Not Found: limite com o ID informado não existe
+    /// - 500 Internal Server Error: erro inesperado ao atualizar o registro
+    /// </remarks>
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -240,6 +289,12 @@ public class GsLimitsController : ControllerBase
     /// Deleta um limite pelo ID.
     /// </summary>
     /// <param name="id">ID do limite a ser deletado.</param>
+    /// <remarks>
+    /// Status possíveis:
+    /// - 200 OK: limite deletado com sucesso
+    /// - 404 Not Found: limite com o ID informado não existe
+    /// - 500 Internal Server Error: erro inesperado ao excluir o registro
+    /// </remarks>
     /// <returns>Mensagem de confirmação e links para ações relacionadas.</returns>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -284,14 +339,25 @@ public class GsLimitsController : ControllerBase
     /// <summary>
     /// Busca limites com filtros, paginação e ordenação.
     /// </summary>
-    /// <param name="idLimits">ID do limite para filtro opcional.</param>
+    /// <param name="idLimits">ID exato do limite para filtro opcional.</param>
     /// <param name="limitHours">Quantidade máxima de horas para filtro opcional.</param>
     /// <param name="limitMeetings">Quantidade máxima de reuniões para filtro opcional.</param>
     /// <param name="createdAt">Data de criação para filtro opcional.</param>
-    /// <param name="page">Número da página (padrão 1).</param>
-    /// <param name="pageSize">Tamanho da página (padrão 10).</param>
+    /// <param name="page">Número da página (padrão 1, mínimo 1).</param>
+    /// <param name="pageSize">Tamanho da página (padrão 10, máximo 100).</param>
     /// <param name="sortBy">Campo de ordenação (padrão "idLimits").</param>
-    /// <param name="sortDir">Direção da ordenação ("asc" ou "desc").</param>
+    /// <param name="sortDir">Direção da ordenação: <c>asc</c> ou <c>desc</c>.</param>
+    /// <remarks>
+    /// Exemplo de chamada:
+    /// <code>
+    /// GET /api/GsLimits/search?limitHours=8&amp;page=1&amp;pageSize=5&amp;sortBy=idLimits&amp;sortDir=asc
+    /// </code>
+    ///
+    /// Status possíveis:
+    /// - 200 OK: resultados retornados com sucesso (podem estar vazios)
+    /// - 400 Bad Request: parâmetros de paginação/ordenação inválidos
+    /// - 500 Internal Server Error: erro inesperado ao realizar a busca
+    /// </remarks>
     /// <returns>Coleção paginada de limites com links HATEOAS.</returns>
     [HttpGet("search")]
     [ProducesResponseType(typeof(CollectionResource<GsLimitsDTO>), StatusCodes.Status200OK)]

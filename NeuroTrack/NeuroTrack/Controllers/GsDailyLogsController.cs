@@ -77,7 +77,11 @@ public class GsDailyLogsController : ControllerBase
     /// Retorna todos os logs diários cadastrados.
     /// </summary>
     /// <remarks>
-    /// Endpoint não paginado. Retorna a coleção completa de GsDailyLogs com links HATEOAS.
+    /// Endpoint não paginado. Retorna a coleção completa de <c>GsDailyLogs</c> com links HATEOAS.
+    ///
+    /// Status possíveis:
+    /// - 200 OK: coleção retornada com sucesso
+    /// - 500 Internal Server Error: erro inesperado ao buscar os dados
     /// </remarks>
     [HttpGet]
     [ProducesResponseType(typeof(CollectionResource<GsDailyLogsDTO>), StatusCodes.Status200OK)]
@@ -128,7 +132,13 @@ public class GsDailyLogsController : ControllerBase
     /// Obtém um log diário específico pelo ID.
     /// </summary>
     /// <param name="id">ID do log diário.</param>
-    /// <returns>Recurso GsDailyLogs com links HATEOAS.</returns>
+    /// <remarks>
+    /// Status possíveis:
+    /// - 200 OK: log encontrado e retornado no corpo da resposta
+    /// - 404 Not Found: nenhum log com o ID informado foi encontrado
+    /// - 500 Internal Server Error: erro inesperado no servidor
+    /// </remarks>
+    /// <returns>Recurso <see cref="GsDailyLogsDTO"/> com links HATEOAS.</returns>
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(Resource<GsDailyLogsDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -170,6 +180,25 @@ public class GsDailyLogsController : ControllerBase
     /// Adiciona um novo log diário.
     /// </summary>
     /// <param name="dto">Dados do log diário a ser criado.</param>
+    /// <remarks>
+    /// Campos gerados automaticamente:
+    /// - <c>idLog</c>: gerado pelo banco (IDENTITY).
+    /// - <c>logDate</c>: preenchido automaticamente com a data/hora do registro (conforme regra da aplicação/banco).
+    ///
+    /// Corpo esperado (JSON) — apenas os campos que o cliente precisa enviar:
+    /// <code>
+    /// {
+    ///   "workHours": 8,
+    ///   "meetings": 3,
+    ///   "idUser": 12
+    /// }
+    /// </code>
+    ///
+    /// Status possíveis:
+    /// - 201 Created: log criado com sucesso
+    /// - 400 Bad Request: payload inválido ou inconsistente
+    /// - 500 Internal Server Error: erro inesperado ao criar o registro
+    /// </remarks>
     /// <returns>Recurso criado com links HATEOAS.</returns>
     [HttpPost]
     [ProducesResponseType(typeof(Resource<GsDailyLogsDTO>), StatusCodes.Status201Created)]
@@ -198,8 +227,27 @@ public class GsDailyLogsController : ControllerBase
     /// <summary>
     /// Atualiza um log diário existente.
     /// </summary>
-    /// <param name="dto">Dados atualizados do log diário.</param>
-    /// <returns>Mensagem de sucesso e links HATEOAS.</returns>
+    /// <param name="dto">
+    /// Dados atualizados do log diário. O campo <c>idLog</c> deve conter o ID do registro que será atualizado.
+    /// </param>
+    /// <remarks>
+    /// Exemplo de corpo (JSON):
+    /// <code>
+    /// {
+    ///   "idLog": 10,
+    ///   "workHours": 7,
+    ///   "meetings": 2,
+    ///   "logDate": "2025-11-28T10:00:00Z",
+    ///   "idUser": 12
+    /// }
+    /// </code>
+    ///
+    /// Status possíveis:
+    /// - 200 OK: log atualizado com sucesso
+    /// - 400 Bad Request: payload inválido
+    /// - 404 Not Found: log com o ID informado não existe
+    /// - 500 Internal Server Error: erro inesperado ao atualizar o registro
+    /// </remarks>
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -240,6 +288,12 @@ public class GsDailyLogsController : ControllerBase
     /// Deleta um log diário pelo ID.
     /// </summary>
     /// <param name="id">ID do log diário a ser deletado.</param>
+    /// <remarks>
+    /// Status possíveis:
+    /// - 200 OK: log deletado com sucesso
+    /// - 404 Not Found: log com o ID informado não existe
+    /// - 500 Internal Server Error: erro inesperado ao excluir o registro
+    /// </remarks>
     /// <returns>Mensagem de confirmação e links para ações relacionadas.</returns>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -284,13 +338,24 @@ public class GsDailyLogsController : ControllerBase
     /// <summary>
     /// Busca logs diários com filtros, paginação e ordenação.
     /// </summary>
-    /// <param name="idLog">ID do log para filtro opcional.</param>
+    /// <param name="idLog">ID exato do log para filtro opcional.</param>
     /// <param name="workHours">Quantidade de horas trabalhadas para filtro opcional.</param>
     /// <param name="idUser">ID do usuário para filtro opcional.</param>
-    /// <param name="page">Número da página (padrão 1).</param>
-    /// <param name="pageSize">Tamanho da página (padrão 10).</param>
-    /// <param name="sortBy">Campo de ordenação (padrão "idLog").</param>
-    /// <param name="sortDir">Direção da ordenação ("asc" ou "desc").</param>
+    /// <param name="page">Número da página (padrão 1, mínimo 1).</param>
+    /// <param name="pageSize">Tamanho da página (padrão 10, máximo 100).</param>
+    /// <param name="sortBy">Campo de ordenação: <c>idLog</c>, <c>workHours</c> ou <c>idUser</c>.</param>
+    /// <param name="sortDir">Direção da ordenação: <c>asc</c> ou <c>desc</c>.</param>
+    /// <remarks>
+    /// Exemplo de chamada:
+    /// <code>
+    /// GET /api/GsDailyLogs/search?idUser=12&amp;page=1&amp;pageSize=5&amp;sortBy=idLog&amp;sortDir=asc
+    /// </code>
+    ///
+    /// Status possíveis:
+    /// - 200 OK: resultados retornados com sucesso (pode vir lista vazia)
+    /// - 400 Bad Request: parâmetros de paginação/ordenção inválidos
+    /// - 500 Internal Server Error: erro inesperado ao realizar a busca
+    /// </remarks>
     /// <returns>Coleção paginada de logs com links HATEOAS.</returns>
     [HttpGet("search")]
     [ProducesResponseType(typeof(CollectionResource<GsDailyLogsDTO>), StatusCodes.Status200OK)]
